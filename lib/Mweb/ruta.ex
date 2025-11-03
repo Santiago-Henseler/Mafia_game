@@ -26,7 +26,7 @@ defmodule Mweb.Ruta do
 
   # Endpoint para crear nuevas rooms
   def call(conn = %{method: "POST", path_info: ["newRoom"]}, _state) do
-    send_whit_cors(conn, 201, RoomStore.createRoom())
+    send_whit_cors(conn, 201,  Integer.to_string(RoomStore.createRoom()))
   end
 
   # Endpoint para obtener todas las rooms actuales
@@ -36,7 +36,7 @@ defmodule Mweb.Ruta do
     send_whit_cors(conn, 200, json)
   end
 
-  def call(conn = %{method: "GET", path_info: [roomId]},  _state) do
+  def call(conn = %{method: "GET", path_info: [roomId]},  _state) when is_integer(roomId) do
     roomPid = RoomStore.getRoom(roomId)
 
     jugadores = GenServer.call(roomPid, :getPlayers)

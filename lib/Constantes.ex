@@ -1,13 +1,13 @@
-defmodule Constantes do 
+defmodule Constantes do
     @moduledoc false
-    @aldeanos 2
-    @mafiosos 2
-    @policias 2
-    @medicos 2
+    @aldeanos 1
+    @mafiosos 1
+    @policias 1
+    @medicos 1
 
     @tiempo_transicion_estado 1000  #  1 segundo
     @tiempo_inicio_partida 5000    # 10 segundos
-    @tiempo_debate_grupo 10000      #  1 minuto      
+    @tiempo_debate_grupo 10000      #  1 minuto
     @tiempo_debate_final 10000     #  3 minutos
 
     defmacro nALDEANOS, do: @aldeanos
@@ -20,7 +20,7 @@ defmodule Constantes do
     defmacro tTRANSICION, do: @tiempo_transicion_estado
     defmacro tDEBATE_GRUPO, do: @tiempo_debate_grupo
     defmacro tDEBATE_FINAL, do: @tiempo_debate_final
-end 
+end
 
 defmodule Timing do
     require Constantes
@@ -33,35 +33,35 @@ defmodule Timing do
     def get_time(:preDiscussion), do: Constantes.tDEBATE_GRUPO
     def get_time(:discussion), do: Constantes.tDEBATE_FINAL
 
-    def get_timestamp_stage(:start) do 
+    def get_timestamp_stage(:start) do
         timestamp_plus_miliseconds(Constantes.tINICIO_PARTIDA)
-    end 
+    end
 
-    def get_timestamp_stage(:selectVictim) do 
+    def get_timestamp_stage(:selectVictim) do
         timestamp_plus_miliseconds(Constantes.tDEBATE_GRUPO)
-    end 
+    end
 
-    def get_timestamp_stage(:medics) do 
+    def get_timestamp_stage(:medics) do
         timestamp_plus_miliseconds(Constantes.tDEBATE_GRUPO)
-    end 
+    end
 
     def get_timestamp_stage(:policias) do
-        timestamp_plus_miliseconds(Constantes.tDEBATE_GRUPO)        
+        timestamp_plus_miliseconds(Constantes.tDEBATE_GRUPO)
     end
 
     def get_timestamp_stage(:preDiscussion) do
-        timestamp_plus_miliseconds(Constantes.tDEBATE_GRUPO)        
+        timestamp_plus_miliseconds(Constantes.tDEBATE_GRUPO)
     end
 
     def get_timestamp_stage(:discussion) do
-        timestamp_plus_miliseconds(Constantes.tDEBATE_FINAL)        
+        timestamp_plus_miliseconds(Constantes.tDEBATE_FINAL)
     end
 
     def get_timestamp_stage(:transicion) do
-        timestamp_plus_miliseconds(Constantes.tTRANSICION)        
+        timestamp_plus_miliseconds(Constantes.tTRANSICION)
     end
 
-    def timestamp_plus_miliseconds(miliseconds) do 
+    def timestamp_plus_miliseconds(miliseconds) do
         DateTime.add(DateTime.utc_now(),miliseconds, :millisecond)
-    end 
+    end
 end

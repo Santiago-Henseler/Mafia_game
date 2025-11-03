@@ -27,7 +27,7 @@ defmodule Mweb.RoomManager.RoomStore do
     {:noreply, rooms}
   end
 
-  def handle_call({:createRoom}, rooms) do
+  def handle_call({:createRoom},_pid, rooms) do
     roomId = Enum.random(0.. 2**20)
     {:ok, roomPid} = GenServer.start(Mweb.RoomManager.Room, roomId)
 

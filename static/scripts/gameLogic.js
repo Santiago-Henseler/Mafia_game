@@ -180,7 +180,7 @@ function savePlayer(players, timestampSave){
 
     timer(getTimeForNextStage(timestampSave), (time)=>{
         let timer = document.getElementById("saveTimer")
-        timer.innerText = "La seleccion de salvado termina en " +time;
+        timer.innerText = "La seleccion de salvado termina en " + time;
 
         if(time == 1){
             saveSeccion.style.display = "none";
@@ -191,7 +191,7 @@ function savePlayer(players, timestampSave){
     for(let save of players){
         optionsContainer.insertAdjacentHTML("beforeend", `
         <label>
-            <input type="radio" name="save" value="${save}"> ${save}
+            <input type="radio" name="saved" value="${save}"> ${save}
         </label>
         <label id="${save}Count"></label>
         <br>
@@ -234,7 +234,7 @@ function selectVictim(victims, timestampSelectVictim){
 
         if(time == 1){
             victimSeccion.style.display = "none";
-            socket.send(JSON.stringify({roomId: roomId, type: "victimSelect", victim: victim}));
+            socket.send(JSON.stringify({type: "victimSelect",roomId: roomId, victim: victim}));
         }
     })
 

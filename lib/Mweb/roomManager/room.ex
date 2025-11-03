@@ -32,7 +32,7 @@ defmodule Mweb.RoomManager.Room do
     {:noreply, new_state}
   end
 
-  def handle_cast({:addPlayer, pid, userId}, _pid, state) do
+  def handle_cast({:addPlayer, pid, userId}, state) do
 
     id = %{userName: userId, pid: pid, alive: true}
     state = %{state | players: state.players ++ [id]}
@@ -50,7 +50,7 @@ defmodule Mweb.RoomManager.Room do
     {:noreply, state}
   end
 
-  def handle_call({:gameAction, action},state) do
+  def handle_call({:gameAction, action}, _pid, state) do
     {:reply, GenServer.call(state.gameController, action),state}
   end
 

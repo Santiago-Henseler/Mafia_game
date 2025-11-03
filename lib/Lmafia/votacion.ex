@@ -37,8 +37,8 @@ defmodule Lmafia.Votacion do
     {:noreply, voteInfo}
   end
 
-  def handle_call(:getWin, stage,_pid, voteInfo) do
-    {:reply,  getMax(stage, voteInfo), voteInfo}
+  def handle_call({:getWin, stage},_pid, voteInfo) do
+    {:reply, getMax(stage, voteInfo), voteInfo}
   end
 
   defp returnResultadoVotacion(:mafiosos, votos) do
@@ -82,9 +82,15 @@ defmodule Lmafia.Votacion do
     returnResultadoVotacion(stage,votos_ordenados)
   end
 
-  defp getMax(_atom, voteInfo) when map_size(voteInfo) > 0 do
-    {firstK, _firstV} = Enum.at(voteInfo, 0)
-    firstK
+  defp getMax(stage, voteInfo) when map_size(voteInfo) > 0 do
+    if stage == :medics do
+      dbg(voteInfo)
+      {firstK, _firstV} = Enum.at(voteInfo, 0)
+      {[], [firstK]}
+    else
+      {firstK, _firstV} = Enum.at(voteInfo, 0)
+      firstK
+    end
   end
 
   defp getMax(_atom, _voteInfo), do: nil
