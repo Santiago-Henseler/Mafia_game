@@ -19,7 +19,6 @@ defmodule  Mweb.WSroom do
 
   # Recibo un mensaje del usuario
   def websocket_handle({:text, msg}, state) do
-    dbg(msg)
     case Jason.decode(msg) do
       {:ok, %{"type" => "ping"}} -> # Para mantener la conexion abierta
         {:reply, {:text, Jason.encode!(%{type: "pong"})}, state}
