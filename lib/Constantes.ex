@@ -10,6 +10,8 @@ defmodule Constantes do
     @tiempo_debate_grupo 10000      #  1 minuto
     @tiempo_debate_final 10000     #  3 minutos
 
+    @port 4000
+
     defmacro nALDEANOS, do: @aldeanos
     defmacro nMAFIOSOS, do: @mafiosos
     defmacro nPOLICIAS, do: @policias
@@ -20,6 +22,8 @@ defmodule Constantes do
     defmacro tTRANSICION, do: @tiempo_transicion_estado
     defmacro tDEBATE_GRUPO, do: @tiempo_debate_grupo
     defmacro tDEBATE_FINAL, do: @tiempo_debate_final
+
+    defmacro ePORT, do: @port
 end
 
 defmodule Timing do

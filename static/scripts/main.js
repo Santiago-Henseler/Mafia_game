@@ -17,7 +17,7 @@ function connectWebSocket(){
 
     document.body.innerHTML += '<div id="players"></div>'
 
-    socket = new WebSocket("ws://localhost:4000/ws/"+roomId+"/"+playerName)
+    socket = new WebSocket("ws://localhost:4000/ws/game/"+roomId+"/"+playerName)
 
     socket.onopen = () => {
         getCharacters();

@@ -1,8 +1,7 @@
-defmodule MWeb.Application do
+defmodule App do
   @moduledoc false
-
+  require Constantes
   use Application
-
   alias Mweb.RoomManager.RoomStore
 
   @impl true
@@ -13,7 +12,8 @@ defmodule MWeb.Application do
     dispatch = [
       {:_,
        [
-         {"/ws/[...]", Mweb.WSroom, []},
+         {"/ws/game/[...]", Mweb.WSroom, []},
+         {"/ws/voice", VoiceChat.PeerHandler, []},
          {:_, Plug.Cowboy.Handler, {Mweb.Ruta, []}}
        ]}
     ]
@@ -22,7 +22,7 @@ defmodule MWeb.Application do
       {Plug.Cowboy,
        scheme: :http,
        plug: Mweb.Ruta,
-       options: [port: 4000, dispatch: dispatch]},
+       options: [port: Constantes.ePORT, dispatch: dispatch]},
     ]
 
     opts = [strategy: :one_for_one, name: Mweb.Supervisor]

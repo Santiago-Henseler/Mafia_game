@@ -49,7 +49,6 @@ defmodule  Mweb.WSroom do
   def terminate(_reason, req, _status) do
     [_padd, _ws, roomId, userId] = String.split(req.path, "/")
 
-
     GenServer.cast(RoomStore.getRoom(roomId), {:removePlayer, userId})
 
     :ok
