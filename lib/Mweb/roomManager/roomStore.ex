@@ -38,11 +38,15 @@ defmodule Mweb.RoomManager.RoomStore do
   end
 
   def handle_call({:createRoomFrom, roomId},_pid, rooms) do
-    # TODO: chequear que no exista esa room
-    {:ok, roomPid} = GenServer.start(Mweb.RoomManager.Room, roomId)
+    if Map.get(rooms, roomId) == nil do
+      {:ok, roomPid} = GenServer.start(Mweb.RoomManager.Room, roomId)
+      rooms = Map.put(rooms, roomId, roomPid)
 
-    rooms = Map.put(rooms, roomId, roomPid)
-    {:reply, roomId, rooms}
+      {:reply, roomId, rooms}
+    else 
+      # TODO: Manejar raise, por el momento mejor que nos explote
+      raise "La habitación ya existia"
+    end
   end
 
   def handle_call({:getRooms}, _pid, rooms) do
@@ -53,7 +57,7 @@ defmodule Mweb.RoomManager.RoomStore do
     {:reply, Map.get(rooms, roomId), rooms}
   end
 
-  def handle_call({:getRoom, roomId}, _pid, rooms)   do
+  def handle_call({:getRoom, roomId}, _pid, rooms) do
     {:reply, Map.get(rooms, String.to_integer(roomId)), rooms}
   end
 
