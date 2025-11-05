@@ -83,10 +83,13 @@ defmodule Lmafia.Mafia do
   end
 
   def handle_info(:cure, gameInfo) do
-    # TODO: si no se elige nada explota aca
-    {sobredosis, curados} = getWin(gameInfo, :medics)
-    gameInfo = %{gameInfo | saveSelect: curados, sobredosis: sobredosis}
-
+    rta = getWin(gameInfo, :medics)
+    gameInfo = if rta != nil do
+      {sobredosis, curados} = rta
+      %{gameInfo | saveSelect: curados, sobredosis: sobredosis}
+    else
+      gameInfo
+    end
     Process.send_after(self(), :policias, Timing.get_time(:transicion))
     {:noreply, gameInfo}
   end
