@@ -8,6 +8,7 @@ defmodule Mweb.RoomManager.RoomStore do
 
   # Casteos para llamar mas lindo al GenServer
   def createRoom(), do: GenServer.call(__MODULE__, {:createRoom})
+  def createRoomFrom(roomId), do: GenServer.call(__MODULE__, {:createRoomFrom, roomId})
   def removeRoom(roomId), do: GenServer.cast(__MODULE__, {:removeRoom, roomId})
   def getRooms(), do: GenServer.call(__MODULE__, {:getRooms})
   def getRoom(roomId), do: GenServer.call(__MODULE__, {:getRoom, roomId})
@@ -22,13 +23,22 @@ defmodule Mweb.RoomManager.RoomStore do
   end
 
   def handle_cast({:removeRoom, roomId}, rooms) do
-    # Deberia eliminar el proceso??
+    # TODO: Deberia eliminar el proceso??
     rooms = Map.delete(rooms, roomId)
     {:noreply, rooms}
   end
 
   def handle_call({:createRoom},_pid, rooms) do
-    roomId = Enum.random(0.. 2**20)
+    roomId = getRoomNumber(rooms)
+
+    {:ok, roomPid} = GenServer.start(Mweb.RoomManager.Room, roomId)
+
+    rooms = Map.put(rooms, roomId, roomPid)
+    {:reply, roomId, rooms}
+  end
+
+  def handle_call({:createRoomFrom, roomId},_pid, rooms) do
+    # TODO: chequear que no exista esa room
     {:ok, roomPid} = GenServer.start(Mweb.RoomManager.Room, roomId)
 
     rooms = Map.put(rooms, roomId, roomPid)
@@ -49,6 +59,17 @@ defmodule Mweb.RoomManager.RoomStore do
 
   def handle_call(request, _pid, rooms) do
     {:reply, request, rooms}
+  end
+
+  defp getRoomNumber(rooms) do
+    roomId = Enum.random(0.. 2**20)
+    key = Map.get(rooms, roomId)
+
+    if key == nil do
+      roomId
+    else
+      getRoomNumber(rooms)
+    end
   end
 
 end

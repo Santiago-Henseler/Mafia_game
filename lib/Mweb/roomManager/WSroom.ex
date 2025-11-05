@@ -53,11 +53,7 @@ defmodule  Mweb.WSroom do
     :ok
   end
 
-  def websocket_info({:msg, payload}, state) do
-    {:reply, {:text, payload}, state}
-  end
-
-  def websocket_info(info, roomStore) do
-    {:reply, {:text, "#{inspect(info)}"}, roomStore}
+  def websocket_info(info, state) do
+    {:reply, {:text, "#{inspect(info)}"}, state}
   end
 end

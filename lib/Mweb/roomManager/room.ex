@@ -18,7 +18,26 @@ defmodule Mweb.RoomManager.Room do
     {:noreply, state}
   end
 
-  def handle_cast({:removePlayer, userId},state) do
+  def handle_cast({:removePlayer, pid},state) when is_pid(pid) do
+
+    new_state = %{state | players: List.delete(state.players, pid)}
+
+    case length(new_state.players) do
+      0 -> RoomStore.removeRoom(new_state.roomId)
+      _ -> :ok
+    end
+
+    {:noreply, new_state}
+  end
+
+  def handle_cast({:removePlayer, pid}, state) when is_pid(pid) do
+
+    new_state = %{state | players: Enum.reject(state.players, fn player -> player.pid == pid end)}
+
+    {:noreply, new_state}
+  end
+
+  def handle_cast({:removePlayer, userId}, state) do
 
     new_state = %{state | players: Enum.reject(state.players, fn player -> player.userName == userId end)}
 
@@ -32,12 +51,18 @@ defmodule Mweb.RoomManager.Room do
     {:noreply, new_state}
   end
 
+  def handle_cast({:addPlayer, pc}, state) do
+    state = %{state | players: state.players ++ [pc]}
+
+    {:noreply, state}
+  end
+
   def handle_cast({:addPlayer, pid, userId}, state) do
 
     id = %{userName: userId, pid: pid, alive: true}
     state = %{state | players: state.players ++ [id]}
 
-    sendPlayers(state)
+   # sendPlayers(state)
 
     state =
       if length(state.players) == Constantes.nJUGADORES and not state.start do
@@ -82,6 +107,7 @@ defmodule Mweb.RoomManager.Room do
   end
 
   defp sendPlayers(state) do
+    # TODO: chequear si se esta usando
     {:ok, json} = Jason.encode(%{type: "users", users: Enum.map(state.players, fn p -> p.userName end)})
     for user <- state.players do
       send(user.pid, {:msg, json})

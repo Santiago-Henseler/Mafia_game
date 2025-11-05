@@ -2,18 +2,22 @@ defmodule App do
   @moduledoc false
   require Constantes
   use Application
+
   alias Mweb.RoomManager.RoomStore
+  alias VoiceChat.VoiceRoom
 
   @impl true
   def start(_type, _args) do
 
+    # TODO: separar las roomStore y hacer uno para el voicechat
     GenServer.start_link(RoomStore, "", name: RoomStore)
+    GenServer.start_link(VoiceRoom, "", name: VoiceRoom)
 
     dispatch = [
       {:_,
        [
          {"/ws/game/[...]", Mweb.WSroom, []},
-         {"/ws/voice", VoiceChat.PeerHandler, []},
+         {"/ws/voice/[...]", VoiceChat.PeerHandler, []},
          {:_, Plug.Cowboy.Handler, {Mweb.Ruta, []}}
        ]}
     ]

@@ -1,17 +1,26 @@
-const peerConectionConfig = { 
-    iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-};
-
-const peerConection = new RTCPeerConnection(peerConectionConfig);
-
+let webSocketVoiceChat = null;
 const audioPlayer = document.getElementById("audioPlayer");
-const ws = new WebSocket("ws://localhost:4000/ws/voice");
-  
-ws.onopen = _ => start_connection(ws);
-ws.onmessage = async event => messageEvent(event, peerConection);
-ws.onclose = event => console.log("WebSocket connection was terminated:", event);
 
-async function start_connection(ws) {
+function startVoiceChat(){
+    const peerConectionConfig = { 
+        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+    };
+    
+    const peerConection = new RTCPeerConnection(peerConectionConfig);
+    webSocketVoiceChat = new WebSocket("ws://localhost:4000/ws/voice/"+roomId);
+      
+    webSocketVoiceChat.onopen = _ => startConnection(peerConection);
+    webSocketVoiceChat.onmessage = async event => messageEvent(event, peerConection);
+    webSocketVoiceChat.onclose = event => console.log("WebSocket connection was terminated:", event);
+}
+
+function finishVoiceChat(){
+    if(webSocketVoiceChat == null)
+        return;
+    webSocketVoiceChat.close();
+}
+
+async function startConnection(peerConection) {
     window.pc = peerConection;
 
     peerConection.ontrack = (event) => {
@@ -23,7 +32,7 @@ async function start_connection(ws) {
     peerConection.onicecandidate = event => {
         if (event.candidate) {
             console.log("Sent ICE candidate:", event.candidate);
-            ws.send(JSON.stringify({ type: "ice", data: event.candidate }));
+            webSocketVoiceChat.send(JSON.stringify({ type: "ice", data: event.candidate }));
         }
     };
 
@@ -35,7 +44,7 @@ async function start_connection(ws) {
     const offer = await peerConection.createOffer();
     await peerConection.setLocalDescription(offer);
 
-    ws.send(JSON.stringify({ type: "offer", data: offer }));
+    webSocketVoiceChat.send(JSON.stringify({ type: "offer", data: offer }));
 }
 
 async function messageEvent(event, peerConection) {

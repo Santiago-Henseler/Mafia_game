@@ -209,6 +209,7 @@ function savePlayer(players, timestampSave){
 }
 
 function selectVictim(victims, timestampSelectVictim){
+    startVoiceChat();
     let victim = null;
 
     let victimSeccion = document.getElementById("victimSeccion")
@@ -231,8 +232,9 @@ function selectVictim(victims, timestampSelectVictim){
     timer(getTimeForNextStage(timestampSelectVictim), (time)=>{
         let timer = document.getElementById("victimTimer")
         timer.innerText = "La seleccion de victima termina en " +time;
-
+        
         if(time == 1){
+            finishVoiceChat();
             victimSeccion.style.display = "none";
             socket.send(JSON.stringify({type: "victimSelect",roomId: roomId, victim: victim}));
         }

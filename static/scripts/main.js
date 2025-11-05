@@ -29,8 +29,8 @@ function connectWebSocket(){
     }
 
     socket.onmessage = (event) => {
+        console.log(event.data)
         data = JSON.parse(event.data)
-        console.log(data)
         switch (data.type){
             case "users": 
                 setPlayers(data.users);

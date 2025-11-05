@@ -83,6 +83,7 @@ defmodule Lmafia.Mafia do
   end
 
   def handle_info(:cure, gameInfo) do
+    # TODO: si no se elige nada explota aca
     {sobredosis, curados} = getWin(gameInfo, :medics)
     gameInfo = %{gameInfo | saveSelect: curados, sobredosis: sobredosis}
 
@@ -221,7 +222,7 @@ defmodule Lmafia.Mafia do
   end
 
   defp setCharacters(gameInfo, players) do
-#    players = Enum.shuffle(players)
+#TODO:    players = Enum.shuffle(players)
 
     {aldeanos, rest}  = Enum.split(players, Constantes.nALDEANOS)
     {medicos,  rest}  = Enum.split(rest, Constantes.nMEDICOS)
