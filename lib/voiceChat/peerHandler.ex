@@ -31,9 +31,6 @@ defmodule VoiceChat.PeerHandler do
   end
 
   def websocket_init(roomId) do
-
-    VoiceRoom.createRoom(roomId)
-
     {:ok, pid} =
       PeerConnection.start_link(
         ice_servers: @ice_servers,

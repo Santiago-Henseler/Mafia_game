@@ -6,10 +6,9 @@ defmodule VoiceChat.VoiceRoom do
   def start_link([]), do: GenServer.start_link(__MODULE__, :ok, name: __MODULE__)
 
   # Casteos para llamar mas lindo al GenServer
-  def createRoom(roomId), do: GenServer.call(__MODULE__, {:createRoom, roomId})
   def removeRoom(roomId), do: GenServer.cast(__MODULE__, {:removeRoom, roomId})
   def getPcsFromPid(pid), do: GenServer.call(__MODULE__, {:getPcsFromPid, pid})
-  def joinRoom(roomId, pc), do: GenServer.cast(__MODULE__, {:joinRoom, roomId, pc})
+  def joinRoom(roomId, pc), do: GenServer.call(__MODULE__, {:joinRoom, roomId, pc})
   def leaveRoom(roomId, pid), do: GenServer.cast(__MODULE__, {:leaveRoom, roomId, pid})
   def handshakeDone(pc), do: GenServer.cast(__MODULE__, {:handshakeDone, pc})
 
@@ -23,11 +22,6 @@ defmodule VoiceChat.VoiceRoom do
     {:noreply, pcPid}
   end
 
-  def handle_call({:createRoom, roomId},_pid, pcPid) do
-    # TODO: podriamos hacer como hacen las rooms del juego que no dan el id de room los users (?
-    {:reply, RoomStore.createRoomFrom(roomId), pcPid}
-  end
-
   def handle_call({:getPcsFromPid, pid}, _pid, pcPid) do
     roomId = Map.get(pcPid, pid)
     roomPid = RoomStore.getRoom(roomId)
@@ -36,11 +30,18 @@ defmodule VoiceChat.VoiceRoom do
     {:reply, pcs, pcPid}
   end
 
-  def handle_cast({:joinRoom, roomId, pc},  pcPid) do
+  def handle_call({:joinRoom, roomId, pc},_from,  pcPid) do
     roomPid = RoomStore.getRoom(roomId)
-    GenServer.cast(roomPid, {:addPlayer, pc})
 
-    {:noreply, Map.put(pcPid, pc.pid, roomId)}
+    roomPid = if roomPid == nil do
+      RoomStore.createRoomFrom(roomId)
+      RoomStore.getRoom(roomId)
+    else
+      roomPid
+    end
+
+      GenServer.cast(roomPid, {:addPlayer, pc})
+    {:reply,nil, Map.put(pcPid, pc.pid, roomId)}
   end
 
   def handle_cast({:leaveRoom, roomId, pid},  pcPid) do

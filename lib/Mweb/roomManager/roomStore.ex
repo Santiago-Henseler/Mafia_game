@@ -43,7 +43,7 @@ defmodule Mweb.RoomManager.RoomStore do
       rooms = Map.put(rooms, roomId, roomPid)
 
       {:reply, roomId, rooms}
-    else 
+    else
       # TODO: Manejar raise, por el momento mejor que nos explote
       raise "La habitación ya existia"
     end
