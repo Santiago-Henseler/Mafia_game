@@ -23,7 +23,7 @@ defmodule Mweb.RoomManager.RoomStore do
   end
 
   def handle_cast({:removeRoom, roomId}, rooms) do
-    # TODO: Deberia eliminar el proceso??
+    Process.exit(roomId, :normal)
     rooms = Map.delete(rooms, roomId)
     {:noreply, rooms}
   end
