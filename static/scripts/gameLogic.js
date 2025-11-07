@@ -42,6 +42,7 @@ function doAction(action){
 }
 
 function discusion(players, timestampVote) {
+    startVoiceChat();
     let voted = null;
 
     let finalVoteSeccion = document.getElementById("finalVoteSeccion")
@@ -65,6 +66,7 @@ function discusion(players, timestampVote) {
         timer.innerText = "La seleccion de mafioso PARA ECHARLO termina en " +time;
 
         if(time == 1){
+            finishVoiceChat();
             finalVoteSeccion.style.display = "none";
             socket.send(JSON.stringify({roomId: roomId, type: "finalVoteSelect", voted: voted}));
         }

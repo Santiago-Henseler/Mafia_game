@@ -1,4 +1,4 @@
-const IP = "localhost"; 
+const IP = "192.168.0.120"; 
 const PUERTO = 4000;
 const WEB_URL = `http://${IP}:${PUERTO}`;
 const WS_URL = `ws://${IP}:${PUERTO}`;
@@ -17,7 +17,7 @@ function initSession(){
 
 function connectWebSocket(){
 
-    if(roomId == null || playerName == null)
+    if(roomId == null || playerName == null || playerName == "")
         return;
 
     document.body.innerHTML += '<div id="players"></div>'

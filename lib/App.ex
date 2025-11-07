@@ -9,8 +9,7 @@ defmodule App do
   @impl true
   def start(_type, _args) do
 
-    # TODO: separar las roomStore y hacer uno para el voicechat
-    GenServer.start_link(RoomStore, "", name: RoomStore)
+    GenServer.start_link(RoomStore, "", name: :RoomStore)
     GenServer.start_link(VoiceRoom, "", name: VoiceRoom)
 
     dispatch = [

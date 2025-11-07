@@ -13,6 +13,9 @@ defmodule VoiceChat.VoiceRoom do
   def handshakeDone(pc), do: GenServer.cast(__MODULE__, {:handshakeDone, pc})
 
   def init(_params) do
+
+    GenServer.start_link(RoomStore, "", name: :VoiceRoomStore)
+
     # %{peerConectionPID: roomId}
     pcPid = %{}
     {:ok, pcPid}
@@ -24,14 +27,14 @@ defmodule VoiceChat.VoiceRoom do
 
   def handle_call({:getPcsFromPid, pid}, _pid, pcPid) do
     roomId = Map.get(pcPid, pid)
-    roomPid = RoomStore.getRoom(roomId)
+    roomPid = VoiceRoomStore.getRoom(:VoiceRoomStore, roomId)
     pcs = GenServer.call(roomPid, :getPlayers)
 
     {:reply, pcs, pcPid}
   end
 
   def handle_call({:joinRoom, roomId, pc},_from,  pcPid) do
-    roomPid = RoomStore.getRoom(roomId)
+    roomPid = RoomStore.getRoom(:VoiceRoomStore, roomId)
 
     roomPid = if roomPid == nil do
       RoomStore.createRoomFrom(roomId)
@@ -40,25 +43,25 @@ defmodule VoiceChat.VoiceRoom do
       roomPid
     end
 
-      GenServer.cast(roomPid, {:addPlayer, pc})
+    GenServer.cast(roomPid, {:addPlayer, pc})
     {:reply,nil, Map.put(pcPid, pc.pid, roomId)}
   end
 
   def handle_cast({:leaveRoom, roomId, pid},  pcPid) do
-    roomPid = RoomStore.getRoom(roomId)
+    roomPid = RoomStore.getRoom(:VoiceRoomStore, roomId)
     GenServer.cast(roomPid, {:removePlayer, pid})
 
     {:noreply, Map.put(pcPid, pid, roomId)}
   end
 
   def handle_cast({:removeRoom, roomId}, pcPid) do
-    RoomStore.removeRoom(roomId)
+    RoomStore.removeRoom(:VoiceRoomStore, roomId)
     {:noreply, pcPid}
   end
 
   def handle_cast({:handshakeDone, pc}, pcPid) do
     roomId = Map.get(pcPid, pc.pid)
-    roomPid = RoomStore.getRoom(roomId)
+    roomPid = RoomStore.getRoom(:VoiceRoomStore, roomId)
 
     GenServer.cast(roomPid, {:removePlayer, pc.pid})
     GenServer.cast(roomPid, {:addPlayer, %{pid: pc.pid, out: pc.out, handshake: true}})

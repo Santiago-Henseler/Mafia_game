@@ -27,7 +27,7 @@ defmodule VoiceChat.PeerHandler do
   ]
 
   def init(con = %{path_info: [roomId]}, _opts) do
-    {:cowboy_websocket, con, String.to_integer(roomId)+1}
+    {:cowboy_websocket, con, String.to_integer(roomId)}
   end
 
   def websocket_init(roomId) do

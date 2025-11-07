@@ -18,18 +18,6 @@ defmodule Mweb.RoomManager.Room do
     {:noreply, state}
   end
 
-  def handle_cast({:removePlayer, pid},state) when is_pid(pid) do
-
-    new_state = %{state | players: List.delete(state.players, pid)}
-
-    case length(new_state.players) do
-      0 -> RoomStore.removeRoom(new_state.roomId)
-      _ -> :ok
-    end
-
-    {:noreply, new_state}
-  end
-
   def handle_cast({:removePlayer, pid}, state) when is_pid(pid) do
 
     new_state = %{state | players: Enum.reject(state.players, fn player -> player.pid == pid end)}
@@ -44,7 +32,7 @@ defmodule Mweb.RoomManager.Room do
     sendPlayers(new_state)
 
     case length(new_state.players) do
-      0 -> RoomStore.removeRoom(new_state.roomId)
+      0 -> RoomStore.removeRoom(:RoomStore, new_state.roomId)
       _ -> :ok
     end
 
