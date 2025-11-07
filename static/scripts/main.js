@@ -1,3 +1,8 @@
+const IP = "localhost"; 
+const PUERTO = 4000;
+const WEB_URL = `http://${IP}:${PUERTO}`;
+const WS_URL = `ws://${IP}:${PUERTO}`;
+
 let roomId = null;
 let socket = null;
 let playerName = null;
@@ -17,7 +22,7 @@ function connectWebSocket(){
 
     document.body.innerHTML += '<div id="players"></div>'
 
-    socket = new WebSocket("ws://localhost:4000/ws/game/"+roomId+"/"+playerName)
+    socket = new WebSocket(`${WS_URL}/ws/game/${roomId}/${playerName}`)
 
     socket.onopen = () => {
         getCharacters();

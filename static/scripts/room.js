@@ -3,7 +3,9 @@ function getRooms(){
     const roomSelection = document.getElementById("roomSelection")
     roomSelection.style.display = "inline";
 
-    fetch("http://localhost:4000/rooms", {method: "GET"})
+//    socket = new WebSocket(`${WS_URL}/ws/game/${roomId}/${playerName}`)
+
+    fetch(`${WEB_URL}/rooms`, {method: "GET"})
     .then(response => response.json())
     .then(data => {
         data.map(id => roomSelection.innerHTML += `<div id="${id}">
@@ -17,7 +19,7 @@ function createRoom(){
 
     const header = document.getElementById("header");
 
-    fetch("http://localhost:4000/newRoom/", {method: "POST"})
+    fetch(`${WEB_URL}/newRoom/`, {method: "POST"})
     .then(response => response.text())
     .then(data => {
         roomId = data;
@@ -32,7 +34,7 @@ function joinRoom(id){
 
     roomId = id
 
-    fetch("http://localhost:4000/"+playerName+"/"+roomId+"/joinRoom/", {method: "POST"})
+    fetch(`${WEB_URL}/${playerName}/${roomId}/joinRoom/`, {method: "POST"})
     .then(response => response.json())
     .then(data => {
         playerName = data.playerName
@@ -50,7 +52,7 @@ function getCharacters(){
         method: "GET",
       };
       
-    fetch("http://localhost:4000/"+roomId, options)
+    fetch(`${WEB_URL}/${roomId}`, options)
         .then(response => response.json())
         .then(data => {
             setPlayers(data)

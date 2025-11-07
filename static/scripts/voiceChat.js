@@ -7,7 +7,7 @@ function startVoiceChat(){
     };
     
     const peerConection = new RTCPeerConnection(peerConectionConfig);
-    webSocketVoiceChat = new WebSocket("ws://localhost:4000/ws/voice/"+roomId);
+    webSocketVoiceChat = new WebSocket(`${WS_URL}/ws/voice/${roomId}`);
       
     webSocketVoiceChat.onopen = _ => startConnection(peerConection);
     webSocketVoiceChat.onmessage = async event => messageEvent(event, peerConection);
