@@ -27,7 +27,7 @@ defmodule VoiceChat.PeerHandler do
   ]
 
   def init(con = %{path_info: [roomId]}, _opts) do
-    {:cowboy_websocket, con, String.to_integer(roomId)}
+    {:cowboy_websocket, con, String.to_integer(roomId), %{idle_timeout: :infinity}}
   end
 
   def websocket_init(roomId) do
@@ -54,7 +54,6 @@ defmodule VoiceChat.PeerHandler do
   end
 
   def websocket_handle({:text, msg}, state) do
-    # TODO despues de cierto tiempo se cierra la conexion sola
     case Jason.decode(msg) do
       {:ok, decoded} ->
         handle_ws_msg(decoded, state)

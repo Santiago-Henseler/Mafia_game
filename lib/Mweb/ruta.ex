@@ -49,7 +49,6 @@ defmodule Mweb.Ruta do
   # Endpoint para obtener todas las rooms actuales
   def call(conn = %{method: "GET", path_info: ["rooms"]},  _state) do
     {:ok, json} = :RoomStore |> RoomStore.getRooms |> Map.keys |> Jason.encode
-
     send_whit_cors(conn, 200, json)
   end
 

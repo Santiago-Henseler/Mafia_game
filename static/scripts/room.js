@@ -3,8 +3,6 @@ function getRooms(){
     const roomSelection = document.getElementById("roomSelection")
     roomSelection.style.display = "inline";
 
-//    socket = new WebSocket(`${WS_URL}/ws/game/${roomId}/${playerName}`)
-
     fetch(`${WEB_URL}/rooms`, {method: "GET"})
     .then(response => response.json())
     .then(data => {

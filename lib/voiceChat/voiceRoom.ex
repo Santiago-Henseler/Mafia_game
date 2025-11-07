@@ -27,7 +27,7 @@ defmodule VoiceChat.VoiceRoom do
 
   def handle_call({:getPcsFromPid, pid}, _pid, pcPid) do
     roomId = Map.get(pcPid, pid)
-    roomPid = VoiceRoomStore.getRoom(:VoiceRoomStore, roomId)
+    roomPid = RoomStore.getRoom(:VoiceRoomStore, roomId)
     pcs = GenServer.call(roomPid, :getPlayers)
 
     {:reply, pcs, pcPid}
@@ -37,8 +37,8 @@ defmodule VoiceChat.VoiceRoom do
     roomPid = RoomStore.getRoom(:VoiceRoomStore, roomId)
 
     roomPid = if roomPid == nil do
-      RoomStore.createRoomFrom(roomId)
-      RoomStore.getRoom(roomId)
+      RoomStore.createRoomFrom(:VoiceRoomStore, roomId)
+      RoomStore.getRoom(:VoiceRoomStore, roomId)
     else
       roomPid
     end

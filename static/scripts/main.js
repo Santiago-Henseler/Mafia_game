@@ -1,4 +1,4 @@
-const IP = "192.168.0.120"; 
+const IP = "192.168.0.106"; 
 const PUERTO = 4000;
 const WEB_URL = `http://${IP}:${PUERTO}`;
 const WS_URL = `ws://${IP}:${PUERTO}`;
@@ -34,8 +34,8 @@ function connectWebSocket(){
     }
 
     socket.onmessage = (event) => {
-        console.log(event.data)
         data = JSON.parse(event.data)
+        console.log(data)
         switch (data.type){
             case "users": 
                 setPlayers(data.users);
@@ -51,6 +51,7 @@ function connectWebSocket(){
                 console.log(data);
                 break;
             case "pong": break;
+            default: console.log("bug")
         }
     }
 }

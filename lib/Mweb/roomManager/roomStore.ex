@@ -23,7 +23,8 @@ defmodule Mweb.RoomManager.RoomStore do
   end
 
   def handle_cast({:removeRoom, roomId}, rooms) do
-    Process.exit(roomId, :normal)
+    roomPid = Map.get(rooms, roomId)
+    Process.exit(roomPid, :normal)
     rooms = Map.delete(rooms, roomId)
     {:noreply, rooms}
   end
@@ -44,7 +45,7 @@ defmodule Mweb.RoomManager.RoomStore do
 
       {:reply, roomId, rooms}
     else
-      # TODO: Manejar raise, por el momento mejor que nos explote
+      # no deberia poder llegar aca nunca
       raise "La habitación ya existia"
     end
   end

@@ -23,6 +23,7 @@ function finishVoiceChat(){
 async function startConnection(peerConection) {
     window.pc = peerConection;
 
+    // Recibimos el audio de los pares y lo reproducimos
     peerConection.ontrack = (event) => {
         console.log("Received remote track", event.streams[0]);
         audioPlayer.srcObject = event.streams[0];

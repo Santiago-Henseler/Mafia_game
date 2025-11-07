@@ -50,7 +50,7 @@ defmodule Mweb.RoomManager.Room do
     id = %{userName: userId, pid: pid, alive: true}
     state = %{state | players: state.players ++ [id]}
 
-#    sendPlayers(state)
+    sendPlayers(state)
 
     state =
       if length(state.players) == Constantes.nJUGADORES and not state.start do
@@ -95,7 +95,6 @@ defmodule Mweb.RoomManager.Room do
   end
 
   defp sendPlayers(state) do
-    # TODO: chequear si se esta usando
     {:ok, json} = Jason.encode(%{type: "users", users: Enum.map(state.players, fn p -> p.userName end)})
     for user <- state.players do
       send(user.pid, {:msg, json})

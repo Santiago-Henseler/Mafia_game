@@ -9,7 +9,7 @@ defmodule  Mweb.WSroom do
 
   # Cuando un nuevo usuario se conecta a la room lo agrego
   def init(req = %{pid: ip, path_info: [roomId, userId]}, state) do
-    GenServer.cast(RoomStore.getRoom(roomId), {:addPlayer, ip, userId})
+    GenServer.cast(RoomStore.getRoom(:RoomStore, roomId), {:addPlayer, ip, userId})
     {:cowboy_websocket, req, state}
   end
 
@@ -46,11 +46,14 @@ defmodule  Mweb.WSroom do
 
   # Cuando el usuario cierra la conexion lo borro de la room
   def terminate(_reason, req, _status) do
-    [_padd, _ws, roomId, userId] = String.split(req.path, "/")
+    [_padd, _ws,_game, roomId, userId] = String.split(req.path, "/")
 
     GenServer.cast(RoomStore.getRoom(:RoomStore, roomId), {:removePlayer, userId})
-
     :ok
+  end
+
+  def websocket_info({:msg, payload}, state) do
+    {:reply, {:text, payload}, state}
   end
 
   def websocket_info(info, state) do
