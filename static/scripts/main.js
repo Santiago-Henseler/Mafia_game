@@ -24,15 +24,6 @@ function connectWebSocket(){
 
     socket = new WebSocket(`${WS_URL}/ws/game/${roomId}/${playerName}`)
 
-    socket.onopen = () => {
-        getCharacters();
-        // setInterval(() => {
-        //     if (socket.readyState === WebSocket.OPEN) {
-        //         socket.send(JSON.stringify({type: "ping"}));
-        //     }
-        // }, 25000);
-    }
-
     socket.onmessage = (event) => {
         data = JSON.parse(event.data)
         switch (data.type){
