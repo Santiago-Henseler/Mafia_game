@@ -261,7 +261,6 @@ function selectVictim(victims, timestampSelectVictim){
 }
 
 function timer(time, fn){
-    console.log("Time = " + time)
     let cuentaRegresiva = setInterval(() => {
         fn(time)
         time--;

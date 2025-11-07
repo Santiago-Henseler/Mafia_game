@@ -26,16 +26,15 @@ function connectWebSocket(){
 
     socket.onopen = () => {
         getCharacters();
-        setInterval(() => {
-            if (socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({type: "ping"}));
-            }
-        }, 25000);
+        // setInterval(() => {
+        //     if (socket.readyState === WebSocket.OPEN) {
+        //         socket.send(JSON.stringify({type: "ping"}));
+        //     }
+        // }, 25000);
     }
 
     socket.onmessage = (event) => {
         data = JSON.parse(event.data)
-        console.log(data)
         switch (data.type){
             case "users": 
                 setPlayers(data.users);
@@ -48,10 +47,9 @@ function connectWebSocket(){
                 doAction(data);
                 break;
             case "debug":
-                console.log(data);
+                console.log(`[DEBUG]: ${data}`);
                 break;
-            case "pong": break;
-            default: console.log("bug")
+            default: console.log(`[ERROR] Unknown message type: ${data}`)
         }
     }
 }

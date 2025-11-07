@@ -10,7 +10,7 @@ defmodule  Mweb.WSroom do
   # Cuando un nuevo usuario se conecta a la room lo agrego
   def init(req = %{pid: ip, path_info: [roomId, userId]}, state) do
     GenServer.cast(RoomStore.getRoom(:RoomStore, roomId), {:addPlayer, ip, userId})
-    {:cowboy_websocket, req, state}
+    {:cowboy_websocket, req, state, %{idle_timeout: :infinity}}
   end
 
   def websocket_init(status) do
@@ -20,8 +20,6 @@ defmodule  Mweb.WSroom do
   # Recibo un mensaje del usuario
   def websocket_handle({:text, msg}, state) do
     case Jason.decode(msg) do
-      {:ok, %{"type" => "ping"}} -> # Para mantener la conexion abierta
-        {:reply, {:text, Jason.encode!(%{type: "pong"})}, state}
       {:ok, %{"type" => "victimSelect", "roomId" => roomId, "victim" => victim}} -> # Momento que eligen la victima
         GenServer.call(RoomStore.getRoom(:RoomStore, roomId), {:gameAction, {:victimSelect, victim}})
         {:ok, state}

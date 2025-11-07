@@ -11,7 +11,7 @@ function startVoiceChat(){
       
     webSocketVoiceChat.onopen = _ => startConnection(peerConection);
     webSocketVoiceChat.onmessage = async event => messageEvent(event, peerConection);
-    webSocketVoiceChat.onclose = event => console.log("WebSocket connection was terminated:", event);
+    // webSocketVoiceChat.onclose = event => console.log("[DEBUG]: WebSocket connection was terminated", event);
 }
 
 function finishVoiceChat(){
@@ -25,14 +25,12 @@ async function startConnection(peerConection) {
 
     // Recibimos el audio de los pares y lo reproducimos
     peerConection.ontrack = (event) => {
-        console.log("Received remote track", event.streams[0]);
         audioPlayer.srcObject = event.streams[0];
         audioPlayer.autoplay = true;
     };
 
     peerConection.onicecandidate = event => {
         if (event.candidate) {
-            console.log("Sent ICE candidate:", event.candidate);
             webSocketVoiceChat.send(JSON.stringify({ type: "ice", data: event.candidate }));
         }
     };
@@ -52,15 +50,15 @@ async function messageEvent(event, peerConection) {
     const { type, data } = JSON.parse(event.data);
     switch (type) {
         case "answer":
-            console.log("Received SDP answer");
+            // SDP answer
             await peerConection.setRemoteDescription(new RTCSessionDescription(data));
             break;
         case "ice":
-            console.log("Received ICE candidate");
+            // ICE candidate
             await peerConection.addIceCandidate(new RTCIceCandidate(data));
             break;
         default:
-            console.log("Unknown message type:", type, data);
+            console.log("[ERROR] Unknown message type:", type, data);
     }
 }
   
