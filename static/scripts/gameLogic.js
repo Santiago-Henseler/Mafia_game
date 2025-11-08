@@ -236,7 +236,7 @@ function selectVictim(victims, timestampSelectVictim){
         timer.innerText = "La seleccion de victima termina en " +time;
         
         if(time == 1){
-            finishVoiceChat();
+             finishVoiceChat();
             victimSeccion.style.display = "none";
             socket.send(JSON.stringify({type: "victimSelect",roomId: roomId, victim: victim}));
         }

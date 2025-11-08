@@ -51,7 +51,18 @@ defmodule Mweb.RoomManager.RoomStore do
   end
 
   def handle_call({:getRooms}, _pid, rooms) do
-    {:reply, rooms, rooms}
+    dbg rooms 
+
+    joinableRooms = rooms |> Enum.reduce(%{}, fn {id, pid}, joinableRooms ->
+      if GenServer.call(pid, :canJoin) do
+        IO.puts "Gen server devolvio que si puede !!!!"
+        Map.put(joinableRooms, id, pid)
+      else
+        joinableRooms
+      end
+    end)
+    
+    {:reply, joinableRooms, rooms}
   end
 
   def handle_call({:getRoom, roomId}, _pid, rooms) when is_integer(roomId) do

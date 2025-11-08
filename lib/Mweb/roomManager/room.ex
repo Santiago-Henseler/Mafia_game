@@ -72,11 +72,7 @@ defmodule Mweb.RoomManager.Room do
   end
 
   def handle_call(:canJoin, _pid, state) do
-    if state.start do
-      {:reply, false, state}
-    end
-
-    {:reply, length(state.players) < Constantes.nJUGADORES, state}
+    {:reply, not state.start and length(state.players) < Constantes.nJUGADORES, state}
   end
 
   def handle_call({:getName, userId}, _pid, state) do
