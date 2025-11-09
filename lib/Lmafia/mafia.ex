@@ -33,6 +33,11 @@ defmodule Lmafia.Mafia do
     {:noreply, gameInfo}
   end
 
+  def handle_cast({:removePlayer, userEliminado}, gameInfo) do
+    gameInfo = user_pasa_a_muertos(gameInfo, userEliminado)  
+    {:noreply, gameInfo}
+  end 
+
   def handle_call({:finalVoteSelect, voted}, _pid, gameInfo) do
     GenServer.cast(gameInfo.votacion, {:addVote, voted})
     {:reply, nil,  gameInfo}
@@ -216,7 +221,7 @@ defmodule Lmafia.Mafia do
     {policias_muertos,policias} = user_en_grupo_pasa_a_muertos(gameInfo.policias, userName)
     {medicos_muertos,medicos}   = user_en_grupo_pasa_a_muertos(gameInfo.medicos , userName)
 
-    muertos = medicos_muertos ++ mafiosos_muertos ++ aldeanos_muertos ++ policias_muertos
+    muertos = gameInfo.muertos ++ medicos_muertos ++ mafiosos_muertos ++ aldeanos_muertos ++ policias_muertos
     %{gameInfo | aldeanos: aldeanos, mafiosos: mafiosos ,medicos:  medicos, policias:  policias, muertos: muertos}
   end
 
