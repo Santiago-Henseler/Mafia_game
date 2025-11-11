@@ -1,3 +1,8 @@
+const IP = "localhost"; 
+const PUERTO = 4000;
+const WEB_URL = `http://${IP}:${PUERTO}`;
+const WS_URL = `ws://${IP}:${PUERTO}`;
+
 let roomId = null;
 let socket = null;
 let playerName = null;
@@ -12,25 +17,15 @@ function initSession(){
 
 function connectWebSocket(){
 
-    if(roomId == null || playerName == null)
+    if(roomId == null || playerName == null || playerName == "")
         return;
 
     document.body.innerHTML += '<div id="players"></div>'
 
-    socket = new WebSocket("ws://localhost:4000/ws/"+roomId+"/"+playerName)
-
-    socket.onopen = () => {
-        getCharacters();
-        setInterval(() => {
-            if (socket.readyState === WebSocket.OPEN) {
-                socket.send(JSON.stringify({type: "ping"}));
-            }
-        }, 25000);
-    }
+    socket = new WebSocket(`${WS_URL}/ws/game/${roomId}/${playerName}`)
 
     socket.onmessage = (event) => {
         data = JSON.parse(event.data)
-        console.log(data)
         switch (data.type){
             case "users": 
                 setPlayers(data.users);
@@ -43,9 +38,9 @@ function connectWebSocket(){
                 doAction(data);
                 break;
             case "debug":
-                console.log(data);
+                console.log(`[DEBUG]: ${data}`);
                 break;
-            case "pong": break;
+            default: console.log(`[ERROR] Unknown message type: ${data}`)
         }
     }
 }

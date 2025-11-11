@@ -18,23 +18,38 @@ defmodule Mweb.RoomManager.Room do
     {:noreply, state}
   end
 
-  def handle_cast({:removePlayer, userId},state) do
+  def handle_cast({:removePlayer, pid}, state) when is_pid(pid) do   
+    # Buscamos pid y llamamos a la otra funcion (no queria duplicar codigo xd) 
+    case Enum.find(state.players, fn player -> player.pid == pid end) do
+      nil ->  {:noreply, state}   # No encontrado
+      player -> handle_cast({:removePlayer, player.userName}, state)
+    end 
+  end
 
+  def handle_cast({:removePlayer, userId}, state) do
     new_state = %{state | players: Enum.reject(state.players, fn player -> player.userName == userId end)}
+    if state.start do # En la partida usuario pasa a muertos 
+      GenServer.cast(state.gameController, {:removePlayer,userId})
+    end
 
     sendPlayers(new_state)
 
-    case length(new_state.players) do
-      0 -> RoomStore.removeRoom(new_state.roomId)
-      _ -> :ok
+    if length(new_state.players) == 0 do
+      RoomStore.removeRoom(:RoomStore, new_state.roomId)
     end
 
     {:noreply, new_state}
   end
 
+  def handle_cast({:addPlayer, pc}, state) do
+    state = %{state | players: state.players ++ [pc]}
+
+    {:noreply, state}
+  end
+
   def handle_cast({:addPlayer, pid, userId}, state) do
 
-    id = %{userName: userId, pid: pid, alive: true}
+    id = %{userName: userId, pid: pid }
     state = %{state | players: state.players ++ [id]}
 
     sendPlayers(state)
@@ -59,11 +74,7 @@ defmodule Mweb.RoomManager.Room do
   end
 
   def handle_call(:canJoin, _pid, state) do
-    if state.start do
-      {:reply, false, state}
-    end
-
-    {:reply, length(state.players) < Constantes.nJUGADORES, state}
+    {:reply, not state.start and length(state.players) < Constantes.nJUGADORES, state}
   end
 
   def handle_call({:getName, userId}, _pid, state) do

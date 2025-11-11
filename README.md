@@ -1,8 +1,22 @@
-# VoiceChat
+# Mafia 
 
-**TODO: Add description**
+## Instrucciones de ejecucción 
 
-## Installation
+$ mix deps.get
+
+$ mix run --no-halt 
+
+Para configurar IP editar la variable IP en main.js 
+
+En el navegador abrir dos pestañas con el archivo  
+
+file://${path_tp}/static/assets/index.html
+
+En la consola del navegador ejecutar startVoiceChat()
+
+Escuchar el eco 
+
+## Elixir Installation
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 by adding `voice_chat` to your list of dependencies in `mix.exs`:

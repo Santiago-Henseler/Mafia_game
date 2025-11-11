@@ -5,7 +5,6 @@ defmodule VoiceChat.MixProject do
     [
       app: :m_web,
       version: "0.1.0",
-      elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -15,7 +14,7 @@ defmodule VoiceChat.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {MWeb.Application, []}
+      mod: {App, []}
     ]
   end
 
@@ -24,7 +23,8 @@ defmodule VoiceChat.MixProject do
     [
       {:plug, "~> 1.18"},
       {:plug_cowboy, "~> 2.7"},
-      {:jason, "~> 1.4"}
+      {:jason, "~> 1.4"},
+      {:ex_webrtc, "~> 0.5.0"}
     ]
   end
 end

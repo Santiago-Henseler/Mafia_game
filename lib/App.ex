@@ -1,19 +1,22 @@
-defmodule MWeb.Application do
+defmodule App do
   @moduledoc false
-
+  require Constantes
   use Application
 
   alias Mweb.RoomManager.RoomStore
+  alias VoiceChat.VoiceRoom
 
   @impl true
   def start(_type, _args) do
 
-    GenServer.start_link(RoomStore, "", name: RoomStore)
+    GenServer.start_link(RoomStore, "", name: :RoomStore)
+    GenServer.start_link(VoiceRoom, "", name: VoiceRoom)
 
     dispatch = [
       {:_,
        [
-         {"/ws/[...]", Mweb.WSroom, []},
+         {"/ws/game/[...]", Mweb.WSroom, []},
+         {"/ws/voice/[...]", VoiceChat.PeerHandler, []},
          {:_, Plug.Cowboy.Handler, {Mweb.Ruta, []}}
        ]}
     ]
@@ -22,7 +25,7 @@ defmodule MWeb.Application do
       {Plug.Cowboy,
        scheme: :http,
        plug: Mweb.Ruta,
-       options: [port: 4000, dispatch: dispatch]},
+       options: [port: Constantes.ePORT, dispatch: dispatch]},
     ]
 
     opts = [strategy: :one_for_one, name: Mweb.Supervisor]
