@@ -1,7 +1,7 @@
 const IP = "mafia-game-p4qe.onrender.com";
 const PUERTO = 4000;
 const WEB_URL = `https://${IP}:${PUERTO}`;
-const WS_URL = `ws://${IP}:${PUERTO}`;
+const WS_URL = `wss://${IP}:${PUERTO}`;
 
 let roomId = null;
 let socket = null;
