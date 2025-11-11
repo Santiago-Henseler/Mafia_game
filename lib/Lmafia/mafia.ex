@@ -34,9 +34,9 @@ defmodule Lmafia.Mafia do
   end
 
   def handle_cast({:removePlayer, userEliminado}, gameInfo) do
-    gameInfo = user_pasa_a_muertos(gameInfo, userEliminado)  
+    gameInfo = user_pasa_a_muertos(gameInfo, userEliminado)
     {:noreply, gameInfo}
-  end 
+  end
 
   def handle_call({:finalVoteSelect, voted}, _pid, gameInfo) do
     GenServer.cast(gameInfo.votacion, {:addVote, voted})
@@ -44,12 +44,12 @@ defmodule Lmafia.Mafia do
   end
 
   def handle_call({:victimSelect, victimId}, pid, gameInfo) do
-    GenServer.cast(gameInfo.votacion, {:addVote, victimId})  
-    if Enum.find(gameInfo.mafiosos, fn x -> x.pid == pid end) != nil do     
+    GenServer.cast(gameInfo.votacion, {:addVote, victimId})
+    if Enum.find(gameInfo.mafiosos, fn x -> x.pid == pid end) != nil do
       dbg(pid)
       dbg(gameInfo.mafiosos)
-    #  GenServer.cast(gameInfo.votacion, {:addVote, victimId})  
-    end 
+    #  GenServer.cast(gameInfo.votacion, {:addVote, victimId})
+    end
     {:reply, nil, gameInfo}
   end
 
@@ -258,12 +258,6 @@ defmodule Lmafia.Mafia do
   end
 
   defp multicast(clientes, mensaje_json) do
-#    Enum.each(clientes, fn x ->
-#      if x.alive == true do
-#        send(x.pid, {:msg, mensaje_json})
-#      end
-#    end)
-
     Enum.each(clientes, fn x -> send(x.pid, {:msg, mensaje_json}) end)
   end
 

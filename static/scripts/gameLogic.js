@@ -37,6 +37,15 @@ function doAction(action){
         case "discusion":
             discusion(action.players, action.timestamp_final_discusion)
             break;
+        case "discusionResult":
+            alert(action.mensaje)
+            break;
+        case "goodEnding":
+            alert(action.mensaje)
+            break;
+        case "badEnding":
+            alert(action.mensaje)
+            break;
         default: break;
     }
 }
