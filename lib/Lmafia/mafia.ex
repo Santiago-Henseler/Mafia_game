@@ -195,20 +195,18 @@ defmodule Lmafia.Mafia do
 
   defp get_jugadores(:all,gameInfo) do
     players = gameInfo.mafiosos ++ gameInfo.medicos ++ gameInfo.aldeanos ++ gameInfo.policias ++ gameInfo.muertos
-    players = Enum.shuffle(players)
-    Enum.map(players, fn x -> if x.alive do x end end)
+    Enum.shuffle(players)
   end
 
   defp get_jugadores(:vivos,gameInfo) do
     players = gameInfo.mafiosos ++ gameInfo.medicos ++ gameInfo.aldeanos ++ gameInfo.policias
-    players = Enum.shuffle(players)
-    Enum.map(players, fn x -> if x.alive do x end end)
+    Enum.shuffle(players)
   end
 
-  defp get_len_vivos(:mafiosos, gameInfo), do: Enum.count(gameInfo.mafiosos, fn x -> x.alive end)
-  defp get_len_vivos(:policias, gameInfo), do: Enum.count(gameInfo.policias, fn x -> x.alive end)
-  defp get_len_vivos(:aldeanos, gameInfo), do: Enum.count(gameInfo.aldeanos, fn x -> x.alive end)
-  defp get_len_vivos(:medicos, gameInfo), do: Enum.count(gameInfo.medicos, fn x -> x.alive end)
+  defp get_len_vivos(:mafiosos, gameInfo), do: Enum.count(gameInfo.mafiosos)
+  defp get_len_vivos(:policias, gameInfo), do: Enum.count(gameInfo.policias)
+  defp get_len_vivos(:aldeanos, gameInfo), do: Enum.count(gameInfo.aldeanos)
+  defp get_len_vivos(:medicos, gameInfo), do: Enum.count(gameInfo.medicos)
   defp get_len_vivos(:pueblo, gameInfo) do
     get_len_vivos(:aldeanos, gameInfo) + get_len_vivos(:policias, gameInfo) + get_len_vivos(:medicos, gameInfo)
   end
@@ -257,9 +255,7 @@ defmodule Lmafia.Mafia do
 
   defp multicast(clientes, mensaje_json) do
     Enum.each(clientes, fn x ->
-      if x.alive == true do
-        send(x.pid, {:msg, mensaje_json})
-      end
+      send(x.pid, {:msg, mensaje_json})
     end)
   end
 
