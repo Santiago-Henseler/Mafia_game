@@ -18,19 +18,20 @@ defmodule Mweb.RoomManager.Room do
     {:noreply, state}
   end
 
-  def handle_cast({:removePlayer, pid}, state) when is_pid(pid) do   
-    # Buscamos pid y llamamos a la otra funcion (no queria duplicar codigo xd) 
-    case Enum.find(state.players, fn player -> player.pid == pid end) do
-      nil ->  {:noreply, state}   # No encontrado
-      player -> handle_cast({:removePlayer, player.userName}, state)
-    end 
+  def handle_cast({:removePlayer, pid}, state) when is_pid(pid) do
+
+    new_state = %{state | players: Enum.reject(state.players, fn player -> player.pid == pid end)}
+
+    {:noreply, new_state}
   end
 
   def handle_cast({:removePlayer, userId}, state) do
-    new_state = %{state | players: Enum.reject(state.players, fn player -> player.userName == userId end)}
-    if state.start do # En la partida usuario pasa a muertos 
+
+    if state.start do # En la partida usuario pasa a muertos
       GenServer.cast(state.gameController, {:removePlayer,userId})
     end
+
+    new_state = %{state | players: Enum.reject(state.players, fn player -> player.userName == userId end)}
 
     sendPlayers(new_state)
 
