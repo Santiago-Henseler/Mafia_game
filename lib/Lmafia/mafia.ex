@@ -43,13 +43,9 @@ defmodule Lmafia.Mafia do
     {:reply, nil,  gameInfo}
   end
 
-  def handle_call({:victimSelect, victimId}, pid, gameInfo) do
+  def handle_call({:victimSelect, victimId}, _pid, gameInfo) do
+    dbg(victimId)
     GenServer.cast(gameInfo.votacion, {:addVote, victimId})
-    if Enum.find(gameInfo.mafiosos, fn x -> x.pid == pid end) != nil do
-      dbg(pid)
-      dbg(gameInfo.mafiosos)
-    #  GenServer.cast(gameInfo.votacion, {:addVote, victimId})
-    end
     {:reply, nil, gameInfo}
   end
 
@@ -199,18 +195,20 @@ defmodule Lmafia.Mafia do
 
   defp get_jugadores(:all,gameInfo) do
     players = gameInfo.mafiosos ++ gameInfo.medicos ++ gameInfo.aldeanos ++ gameInfo.policias ++ gameInfo.muertos
-    Enum.shuffle(players)
+    players = Enum.shuffle(players)
+    Enum.map(players, fn x -> if x.alive do x end end)
   end
 
   defp get_jugadores(:vivos,gameInfo) do
     players = gameInfo.mafiosos ++ gameInfo.medicos ++ gameInfo.aldeanos ++ gameInfo.policias
-    Enum.shuffle(players)
+    players = Enum.shuffle(players)
+    Enum.map(players, fn x -> if x.alive do x end end)
   end
 
-  defp get_len_vivos(:mafiosos, gameInfo), do: Enum.count(gameInfo.mafiosos)
-  defp get_len_vivos(:policias, gameInfo), do: Enum.count(gameInfo.policias)
-  defp get_len_vivos(:aldeanos, gameInfo), do: Enum.count(gameInfo.aldeanos)
-  defp get_len_vivos(:medicos, gameInfo), do: Enum.count(gameInfo.medicos)
+  defp get_len_vivos(:mafiosos, gameInfo), do: Enum.count(gameInfo.mafiosos, fn x -> x.alive end)
+  defp get_len_vivos(:policias, gameInfo), do: Enum.count(gameInfo.policias, fn x -> x.alive end)
+  defp get_len_vivos(:aldeanos, gameInfo), do: Enum.count(gameInfo.aldeanos, fn x -> x.alive end)
+  defp get_len_vivos(:medicos, gameInfo), do: Enum.count(gameInfo.medicos, fn x -> x.alive end)
   defp get_len_vivos(:pueblo, gameInfo) do
     get_len_vivos(:aldeanos, gameInfo) + get_len_vivos(:policias, gameInfo) + get_len_vivos(:medicos, gameInfo)
   end
@@ -258,7 +256,11 @@ defmodule Lmafia.Mafia do
   end
 
   defp multicast(clientes, mensaje_json) do
-    Enum.each(clientes, fn x -> send(x.pid, {:msg, mensaje_json}) end)
+    Enum.each(clientes, fn x ->
+      if x.alive == true do
+        send(x.pid, {:msg, mensaje_json})
+      end
+    end)
   end
 
   defp getWin(gameInfo, stage) do
