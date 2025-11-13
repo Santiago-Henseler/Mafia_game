@@ -1,4 +1,4 @@
-const IP = "52.14.112.59";
+const IP = "18.116.238.199:";
 const PUERTO = 4000;
 const WEB_URL = `http://${IP}:${PUERTO}`;
 const WS_URL = `ws://${IP}:${PUERTO}`;
