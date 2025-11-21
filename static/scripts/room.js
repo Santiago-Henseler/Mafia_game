@@ -1,17 +1,42 @@
 function getRooms(){
 
-    const roomSelection = document.getElementById("roomSelection")
-    roomSelection.style.display = "inline";
+      const roomSelection = document.getElementById("roomsTable")
+      document.getElementById('roomsSection').classList.remove('d-none');
+//
+  //  fetch(`${WEB_URL}/rooms`, {method: "GET"})
+  //  .then(response => response.json())
+  //  .then(data => {
+  //      data.map(id => {
+//
+  //                  const item = document.createElement('div');
+  //                  item.className = 'list-group-item d-flex justify-content-between align-items-center bg-dark text-light';
+  //                  item.innerHTML = `
+  //                                  <span>${id}</span>
+  //                                  <button class="btn btn-primary" onclick="joinRoom(${id})">Unirse</button>
+  //                                  `;
+  //                  list.appendChild(item);})
+  //  });
 
-    fetch(`${WEB_URL}/rooms`, {method: "GET"})
-    .then(response => response.json())
-    .then(data => {
-        data.map(id => roomSelection.innerHTML += `<div id="${id}">
-                                                        <p>Room: ${id}</p>
-                                                        <button style="height: 50px; width: 100px;" onclick="joinRoom(${id})">Unirme</button>
-                                                    </div>`)
+
+    let data = [0,1,2,3]
+
+    data.forEach(id => {
+        const row = document.createElement('tr');
+    
+        row.innerHTML = `
+            <td class="fw-semibold text-center">${id}</td>
+            <td class="text-center">
+                <button class="btn btn-primary btn-sm border-0" onclick="joinRoom(${id})">Unirse</button>
+            </td>
+        `;
+    
+        roomSelection.appendChild(row); 
     });
+
+
+
 }
+
 
 function createRoom(){
 

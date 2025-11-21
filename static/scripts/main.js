@@ -9,9 +9,15 @@ let playerName = null;
 
 function initSession(){
     const labelName = document.getElementById("jugador");
+    
     playerName = labelName.value;
 
-    document.getElementById("session").style.display = "none";
+    if (playerName == null || playerName == "") {
+        alert('Por favor, ingrese un nombre.');
+        return;
+        }
+
+    document.getElementById("session").classList.add('d-none');
     getRooms();
 }
 
