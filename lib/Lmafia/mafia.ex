@@ -228,7 +228,7 @@ defmodule Lmafia.Mafia do
   end
 
   defp setCharacters(gameInfo, players) do
-#TODO:    players = Enum.shuffle(players)
+    players = Enum.shuffle(players)
 
     {aldeanos, rest}  = Enum.split(players, Constantes.nALDEANOS)
     {medicos,  rest}  = Enum.split(rest, Constantes.nMEDICOS)

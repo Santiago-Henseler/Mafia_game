@@ -1,9 +1,29 @@
 let character = null;
 
+function getImage(characterType){
+    if(characterType == "mafioso")
+        return 'img/mafia.jpg';
+}
+
 function setCharacter(characterType){
     character = characterType
 
-    document.body.innerHTML += `<center><h3>Sos un ${character}</h3></center>`;
+    
+    document.body.innerHTML += `<style>
+        .banner-header {
+            height: 450px;
+            background-image: url(${getImage(characterType)});
+            background-size:100% 100%;
+            background-position: center -50px;
+            background-repeat: no-repeat;
+            background-color: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>`
+
 }
 
 function startGame(timestampGameStarts){
