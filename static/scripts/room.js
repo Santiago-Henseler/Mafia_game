@@ -30,24 +30,24 @@ function createRoom(){
     fetch(`${WEB_URL}/newRoom/`, {method: "POST"})
     .then(response => response.text())
     .then(data => {
-        roomId = data;
-        header.innerHTML += `<center><h1>Room Id: ${roomId}</h1></center>`
-        document.getElementById("roomSelection").style.display = "none"
-
+        roomId = data;  
+//        header.innerHTML += `<center><h1>Room Id: ${roomId}</h1></center>`
+//        document.getElementById("roomSelection").style.display = "none"
+        showRoomUI(roomId);
         connectWebSocket();
     });
 }
 
 function joinRoom(id){
-
     roomId = id
 
     fetch(`${WEB_URL}/${playerName}/${roomId}/joinRoom/`, {method: "POST"})
     .then(response => response.json())
     .then(data => {
         playerName = data.playerName
-        header.innerHTML += `<center><h1>Room Id: ${data.roomId}</h1></center>`
-        document.getElementById("roomSelection").style.display = "none"
+//        header.innerHTML += `<center><h1>Room Id: ${data.roomId}</h1></center>`
+//        document.getElementById("roomSelection").style.display = "none"
+        showRoomUI(roomId);
         connectWebSocket();
     });
 }
@@ -76,4 +76,14 @@ function setPlayers(users){
                                 </div>    
                             </center>`
 
+}
+
+function showRoomUI(roomId) {
+    // Ocultar login y lista de salas
+    document.getElementById("session").classList.add("d-none");
+    document.getElementById("roomsSection").classList.add("d-none");
+
+    // Mostrar pantalla de sala
+    document.getElementById("currentRoomSection").classList.remove("d-none");
+    document.getElementById("currentRoomId").innerText = roomId;
 }
