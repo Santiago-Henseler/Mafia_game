@@ -1,8 +1,12 @@
 let character = null;
 
 function getImage(characterType){
-    if(characterType == "mafioso")
-        return 'img/mafia.jpg';
+    switch(characterType){
+        case "mafioso": return 'img/mafia.jpg';
+        case "medico": return 'img/medico.jpg';
+        case "policia": return 'img/policia.jpg';
+        case "aldeano": return 'img/campesino.jpg';
+    }
 }
 
 function setCharacter(characterType){

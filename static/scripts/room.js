@@ -22,10 +22,7 @@ function getRooms(){
 
 }
 
-
 function createRoom(){
-
-    const header = document.getElementById("header");
 
     fetch(`${WEB_URL}/newRoom/`, {method: "POST"})
     .then(response => response.text())
@@ -53,8 +50,6 @@ function joinRoom(id){
 }
 
 function getCharacters(){
-
-    const container = document.getElementById("players");
 
     const options = {
         method: "GET",
