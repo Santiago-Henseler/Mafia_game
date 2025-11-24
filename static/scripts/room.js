@@ -75,3 +75,9 @@ function showRoomUI(roomId) {
     document.getElementById("gameContent").innerHTML = "";
     document.getElementById("gameActions").innerHTML = "";
 }
+
+function clearGameUI() {
+    document.getElementById("gameTitle").textContent = "";
+    document.getElementById("gameContent").innerHTML = "";
+    document.getElementById("gameActions").innerHTML = "";
+}

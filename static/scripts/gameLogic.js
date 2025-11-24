@@ -196,52 +196,48 @@ function selectGuilty(players, timestampGuilty){
 }
 
 function savePlayer(players, timestampSave){
-    let saved = null;
+    showScreen("gameSection");
 
-    let saveSeccion = document.getElementById("saveSeccion")
-    if (!saveSeccion){
-        document.body.insertAdjacentHTML("beforeend",`
-            <div id="saveSeccion">
-                    <center>
-                        <h2>Selecciona a quien curar</h2>
-                        <h3 id="saveTimer"></h3>
-                    </center>
-                <div id="saveOptions"></div>
-            </div>`); 
-        saveSeccion = document.getElementById("saveSeccion")
+    document.getElementById("gameTitle").textContent = "Selecciona a quien curar";
+    document.getElementById("gameContent").innerHTML = `
+        <h3 id="saveTimer"></h3>
+    `;
+
+    const actions = document.getElementById("gameActions");
+    actions.innerHTML = "";             // limpiar contenido previo
+
+    let optionsContainer = document.createElement("div");
+    optionsContainer.id = "saveOptions";
+    actions.appendChild(optionsContainer);
+
+    for(let v of players){
+        optionsContainer.insertAdjacentHTML("beforeend", `
+            <label>
+                <input type="radio" name="saved" value="${v}"> ${v}
+            </label>
+            <label id="${v}Count"></label>
+            <br>
+        `);
     }
-    saveSeccion.style.display = "block";
-    const optionsContainer = document.getElementById("saveOptions");
-    optionsContainer.innerHTML = "";
+
+    let saved = null;
+    const radios = document.querySelectorAll('input[name="saved"]');
+    radios.forEach(radio => {
+        radio.addEventListener("change", () => {
+            saved = radio.value;
+        });
+    });
 
     timer(getTimeForNextStage(timestampSave), (time)=>{
-        let timer = document.getElementById("saveTimer")
-        timer.innerText = "La seleccion de salvado termina en " + time;
+        document.getElementById("saveTimer").innerText =
+            "La seleccion de salvado termina en " + time;
 
         if(time == 1){
-            saveSeccion.style.display = "none";
+            finishVoiceChat();
             socket.send(JSON.stringify({roomId: roomId, type: "saveSelect", saved: saved}));
+            clearGameUI();
         }
-    })
-
-    for(let save of players){
-        optionsContainer.insertAdjacentHTML("beforeend", `
-        <label>
-            <input type="radio" name="saved" value="${save}"> ${save}
-        </label>
-        <label id="${save}Count"></label>
-        <br>
-    `);
-
-    }
-
-    const radios = document.querySelectorAll('input[name="saved"]');
-
-    radios.forEach(radio => {
-      radio.addEventListener("change", () => {
-        saved = radio.value
-      });
-    })
+    });
 }
 
 function selectVictim(victims, timestampSelectVictim){
@@ -285,11 +281,8 @@ function selectVictim(victims, timestampSelectVictim){
 
         if(time == 1){
             finishVoiceChat();
-            socket.send(JSON.stringify({
-                type: "victimSelect",
-                roomId: roomId,
-                victim: victim
-            }));
+            socket.send(JSON.stringify({ type: "victimSelect",roomId: roomId,victim: victim }));
+            clearGameUI();
         }
     });
 }
