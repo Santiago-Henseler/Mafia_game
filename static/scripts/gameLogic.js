@@ -147,52 +147,45 @@ function guiltyAnswer(answer, timestamp) {
 }
 
 function selectGuilty(players, timestampGuilty){
-    let guilty = null;
+    showScreen("gameSection");
 
-    let guiltySeccion = document.getElementById("guiltySeccion")
-    if (!guiltySeccion){
-        document.body.insertAdjacentHTML("beforeend",`
-            <div id="guiltySeccion">
-                    <center>
-                        <h2>Selecciona quien sospechas que es el asesino</h2>
-                        <h3 id="guiltyTimer"></h3>
-                    </center>
-                <div id="guiltyOptions"></div>
-            </div>`); 
-        guiltySeccion = document.getElementById("guiltySeccion")
-    }
-    guiltySeccion.style.display = "block";
-    const optionsContainer = document.getElementById("guiltyOptions");
-    optionsContainer.innerHTML = "";
+    document.getElementById("gameTitle").textContent = "Selecciona quien sospechas que es el asesino";
+    document.getElementById("gameContent").innerHTML = `
+        <h3 id="guiltyTimer"></h3>
+    `;
+    const actions = document.getElementById("gameActions");
+    actions.innerHTML = "";             // limpiar contenido previo
 
-    timer(getTimeForNextStage(timestampGuilty), (time)=>{
-        let timer = document.getElementById("guiltyTimer")
-        timer.innerText = "La seleccion de sospecha termina en " +time;
+    let optionsContainer = document.createElement("div");
+    optionsContainer.id = "guiltyOptions";
+    actions.appendChild(optionsContainer);
 
-        if(time == 1){
-            guiltySeccion.style.display = "none";
-            socket.send(JSON.stringify({roomId: roomId, type: "guiltySelect", guilty: guilty}));
-        }
-    })
-
-    for(let g of players){
+    for(let v of players){
         optionsContainer.insertAdjacentHTML("beforeend", `
-        <label>
-            <input type="radio" name="guilty" value="${g}"> ${g}
-        </label>
-        <label id="${g}Count"></label>
-        <br>
-    `);
-
+            <label>
+                <input type="radio" name="guilty" value="${v}"> ${v}
+            </label>
+            <label id="${v}Count"></label>
+            <br>
+        `);
     }
 
     const radios = document.querySelectorAll('input[name="guilty"]');
-
     radios.forEach(radio => {
-      radio.addEventListener("change", () => {
-        guilty = radio.value
-      });
-    })    
+        radio.addEventListener("change", () => {
+            guilty = radio.value;
+        });
+    });
+
+    timer(getTimeForNextStage(timestampGuilty), (time)=>{
+        document.getElementById("guiltyTimer").innerText =
+            "La seleccion de sospecha termina en " + time;
+
+        if(time == 1){
+            socket.send(JSON.stringify({roomId: roomId, type: "guiltySelect", guilty: guilty}));
+            clearGameUI();
+        }
+    });
 }
 
 function savePlayer(players, timestampSave){
@@ -233,7 +226,6 @@ function savePlayer(players, timestampSave){
             "La seleccion de salvado termina en " + time;
 
         if(time == 1){
-            finishVoiceChat();
             socket.send(JSON.stringify({roomId: roomId, type: "saveSelect", saved: saved}));
             clearGameUI();
         }
