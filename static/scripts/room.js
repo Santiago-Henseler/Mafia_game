@@ -63,22 +63,15 @@ function getCharacters(){
 }
 
 function setPlayers(users){
-
-    const container = document.getElementById("players");
-    container.innerHTML = `<center>
-                                <div>
-                                    <h4>Usuarios conectados: ${users}</h4>
-                                </div>    
-                            </center>`
-
+    document.getElementById("gamePlayers").textContent = "Usuarios conectados: " + users;
 }
 
 function showRoomUI(roomId) {
-    // Ocultar login y lista de salas
-    document.getElementById("session").classList.add("d-none");
-    document.getElementById("roomsSection").classList.add("d-none");
+    showScreen("gameSection");
 
-    // Mostrar pantalla de sala
-    document.getElementById("currentRoomSection").classList.remove("d-none");
-    document.getElementById("currentRoomId").innerText = roomId;
+    document.getElementById("gameRoomId").textContent = roomId;
+    document.getElementById("gamePlayers").textContent = "Usuarios conectados: 0";
+    document.getElementById("gameTitle").textContent = "Esperando más jugadores...";
+    document.getElementById("gameContent").innerHTML = "";
+    document.getElementById("gameActions").innerHTML = "";
 }

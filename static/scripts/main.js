@@ -21,6 +21,15 @@ function initSession(){
     getRooms();
 }
 
+function showScreen(id) {
+    const screens = ["session", "roomsSection", "currentRoomSection", "gameSection"];
+    screens.forEach(s => {
+        document.getElementById(s).classList.add("d-none");
+    });
+    document.getElementById(id).classList.remove("d-none");
+}
+
+
 function connectWebSocket(){
 
     if(roomId == null || playerName == null || playerName == "")
