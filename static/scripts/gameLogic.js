@@ -77,73 +77,68 @@ function doAction(action){
 
 function discusion(players, timestampVote) {
     startVoiceChat();
+    showScreen("gameSection");
+
+    document.getElementById("gameTitle").textContent = "Selecciona quien crees que es un mafioso";
+    document.getElementById("gameContent").innerHTML = `
+        <h3 id="finalVoteTimer"></h3>
+    `;
+
+    const actions = document.getElementById("gameActions");
+    actions.innerHTML = ""; // limpiar contenido previo
+
+    let optionsContainer = document.createElement("div");
+    optionsContainer.id = "finalVoteOptions";
+    actions.appendChild(optionsContainer);
+
     let voted = null;
-
-    let finalVoteSeccion = document.getElementById("finalVoteSeccion")
-    if (!finalVoteSeccion){
-        document.body.insertAdjacentHTML("beforeend",`
-            <div id="finalVoteSeccion">
-                    <center>
-                        <h2>Selecciona quien crees que es un mafioso</h2>
-                        <h3 id="finalVoteTimer"></h3>
-                    </center>
-                <div id="finalVoteOptions"></div>
-            </div>`); 
-        finalVoteSeccion = document.getElementById("finalVoteSeccion")
-    }
-    finalVoteSeccion.style.display = "block";
-    const optionsContainer = document.getElementById("finalVoteOptions");
-    optionsContainer.innerHTML = "";
-
-    timer(getTimeForNextStage(timestampVote), (time)=>{
-        let timer = document.getElementById("finalVoteTimer")
-        timer.innerText = "La seleccion de mafioso PARA ECHARLO termina en " +time;
-
-        if(time == 1){
-            finishVoiceChat();
-            finalVoteSeccion.style.display = "none";
-            socket.send(JSON.stringify({roomId: roomId, type: "finalVoteSelect", voted: voted}));
-        }
-    })
-
     for(let p of players){
         optionsContainer.insertAdjacentHTML("beforeend", `
-        <label>
-            <input type="radio" name="voted" value="${p}"> ${p}
-        </label>
-        <label id="${p}Count"></label>
-        <br>
-    `);
-
+            <label>
+                <input type="radio" name="voted" value="${p}"> ${p}
+            </label>
+            <label id="${p}Count"></label>
+            <br>
+        `);
     }
 
     const radios = document.querySelectorAll('input[name="voted"]');
-
     radios.forEach(radio => {
-      radio.addEventListener("change", () => {
-        voted = radio.value
-      });
-    })    
+        radio.addEventListener("change", () => {
+            voted = radio.value;
+        });
+    });
+
+    timer(getTimeForNextStage(timestampVote), (time)=>{
+        document.getElementById("finalVoteTimer").innerText =
+            "La seleccion de mafioso PARA ECHARLO termina en " + time;
+
+        if(time == 1){
+            finishVoiceChat();
+            socket.send(JSON.stringify({roomId: roomId, type: "finalVoteSelect", voted: voted}));
+            clearGameUI();
+        }
+    });
+    
+
 }
 
 function guiltyAnswer(answer, timestamp) {
-    document.body.insertAdjacentHTML("beforeend",`
-        <div id="guiltyAnsweSeccion">
-                <center>
-                    <h2>${answer}</h2>
-                    <h3 id="guiltyAnswerTimer"></h3>
-                </center>
-        </div>`); 
-    let guiltyAnsweSeccion = document.getElementById("guiltyAnsweSeccion")
+    showScreen("gameSection");
+
+    document.getElementById("gameTitle").textContent = answer;
+    document.getElementById("gameContent").innerHTML = `
+        <h3 id="guiltyAnswerTimer"></h3>
+    `;
 
     timer(getTimeForNextStage(timestamp), (time)=>{
-        let timer = document.getElementById("guiltyAnswerTimer");
-        timer.innerText = "La confirmación de sospechas termina en " +time;
+        document.getElementById("guiltyAnswerTimer").innerText =
+            "La confirmación de sospechas termina en " + time;
 
         if(time == 1){
-            guiltyAnsweSeccion.remove();
+            clearGameUI();
         }
-    })
+    });
 }
 
 function selectGuilty(players, timestampGuilty){
