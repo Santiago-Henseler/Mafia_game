@@ -55,7 +55,6 @@ defmodule Mweb.RoomManager.RoomStore do
 
     joinableRooms = rooms |> Enum.reduce(%{}, fn {id, pid}, joinableRooms ->
       if GenServer.call(pid, :canJoin) do
-        IO.puts "Gen server devolvio que si puede !!!!"
         Map.put(joinableRooms, id, pid)
       else
         joinableRooms

@@ -1,4 +1,4 @@
-const IP = "18.116.238.199";
+const IP = "127.0.0.1";
 const PUERTO = 4000;
 const WEB_URL = `http://${IP}:${PUERTO}`;
 const WS_URL = `ws://${IP}:${PUERTO}`;
@@ -9,11 +9,26 @@ let playerName = null;
 
 function initSession(){
     const labelName = document.getElementById("jugador");
+    
     playerName = labelName.value;
 
-    document.getElementById("session").style.display = "none";
+    if (playerName == null || playerName == "") {
+        alert('Por favor, ingrese un nombre.');
+        return;
+        }
+
+    document.getElementById("session").classList.add('d-none');
     getRooms();
 }
+
+function showScreen(id) {
+    const screens = ["session", "roomsSection", "currentRoomSection", "gameSection"];
+    screens.forEach(s => {
+        document.getElementById(s).classList.add("d-none");
+    });
+    document.getElementById(id).classList.remove("d-none");
+}
+
 
 function connectWebSocket(){
 
@@ -32,7 +47,9 @@ function connectWebSocket(){
                 break;
             case "characterSet": 
                 setCharacter(data.character);
-                startGame(data.timestamp_game_starts);
+                if ( data.character != "Muerto" && data.character != "Linchado" ) {
+                    startGame(data.timestamp_game_starts);
+                }
                 break;
             case "action":
                 doAction(data);

@@ -1,22 +1,49 @@
 let character = null;
 
-function setCharacter(characterType){
-    character = characterType
-
-    document.body.innerHTML += `<center><h3>Sos un ${character}</h3></center>`;
+function getImage(characterType){
+    switch(characterType){
+        case "Mafioso": return 'img/mafia.jpg';
+        case "Medico": return 'img/medico.jpg';
+        case "Policia": return 'img/policia.jpg';
+        case "Aldeano": return 'img/campesino.jpg';
+        case "Muerto": return 'img/muerto.jpeg';
+        case "Linchado": return 'img/linchado.jpg';
+        default: console.log("Tipo de personaje "+characterType+" no encontrado");
+    }
 }
 
-function startGame(timestampGameStarts){
-    document.body.innerHTML += '<center><h3 id="startTimer"></h3></center>'
-    
-    timer( getTimeForNextStage(timestampGameStarts), (time)=>{
-        let timer = document.getElementById("startTimer")
-        timer.innerText = "La partida inicia en " +time;
+function setCharacter(characterType) {
+    document.body.style.backgroundImage = `url('${getImage(characterType)}')`;
+    document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundRepeat = "no-repeat";
+    document.body.style.backgroundPosition = "center center";
+}
 
-        if(time == 1){
-            timer.style.display = "none"
+function startGame(timestampGameStarts) {
+
+
+    showScreen("gameSection");
+
+    document.getElementById("gameTitle").textContent =
+        "La partida está por comenzar";
+    
+    document.getElementById("gameContent").innerHTML =
+        `<h3 id="startTimer"></h3>`;
+
+    document.getElementById("gameActions").innerHTML = "";
+
+    timer(getTimeForNextStage(timestampGameStarts), (time)=>{
+        const timerLabel = document.getElementById("startTimer");
+
+        if (!timerLabel) return;
+
+        timerLabel.textContent = "La partida inicia en " + time;
+
+        if(time === 1){
+            timerLabel.remove();        
+            document.getElementById("gameTitle").textContent = "";
         }
-    })
+    });
 }
 
 function doAction(action){
@@ -34,11 +61,14 @@ function doAction(action){
         case "guiltyAnswer":
             guiltyAnswer(action.answer, action.timestamp_guilty_answer)
             break;
+        case "nightResult":
+            nightResult(action.result, action.timestamp_night_result)
+            break;
         case "discusion":
             discusion(action.players, action.timestamp_final_discusion)
             break;
         case "discusionResult":
-            alert(action.mensaje)
+            discussionResult(action.mensaje, action.timestamp)
             break;
         case "goodEnding":
             alert(action.mensaje)
@@ -52,221 +82,237 @@ function doAction(action){
 
 function discusion(players, timestampVote) {
     startVoiceChat();
+    showScreen("gameSection");
+
+    document.getElementById("gameTitle").textContent = "Selecciona quien crees que es un mafioso";
+    document.getElementById("gameContent").innerHTML = `
+        <h3 id="finalVoteTimer"></h3>
+    `;
+
+    const actions = document.getElementById("gameActions");
+    actions.innerHTML = ""; // limpiar contenido previo
+
+    let optionsContainer = document.createElement("div");
+    optionsContainer.id = "finalVoteOptions";
+    actions.appendChild(optionsContainer);
+
     let voted = null;
-
-    let finalVoteSeccion = document.getElementById("finalVoteSeccion")
-    if (!finalVoteSeccion){
-        document.body.insertAdjacentHTML("beforeend",`
-            <div id="finalVoteSeccion">
-                    <center>
-                        <h2>Selecciona quien crees que es un mafioso</h2>
-                        <h3 id="finalVoteTimer"></h3>
-                    </center>
-                <div id="finalVoteOptions"></div>
-            </div>`); 
-        finalVoteSeccion = document.getElementById("finalVoteSeccion")
-    }
-    finalVoteSeccion.style.display = "block";
-    const optionsContainer = document.getElementById("finalVoteOptions");
-    optionsContainer.innerHTML = "";
-
-    timer(getTimeForNextStage(timestampVote), (time)=>{
-        let timer = document.getElementById("finalVoteTimer")
-        timer.innerText = "La seleccion de mafioso PARA ECHARLO termina en " +time;
-
-        if(time == 1){
-            finishVoiceChat();
-            finalVoteSeccion.style.display = "none";
-            socket.send(JSON.stringify({roomId: roomId, type: "finalVoteSelect", voted: voted}));
-        }
-    })
-
     for(let p of players){
         optionsContainer.insertAdjacentHTML("beforeend", `
-        <label>
-            <input type="radio" name="voted" value="${p}"> ${p}
-        </label>
-        <label id="${p}Count"></label>
-        <br>
-    `);
-
+            <label>
+                <input type="radio" name="voted" value="${p}"> ${p}
+            </label>
+            <label id="${p}Count"></label>
+            <br>
+        `);
     }
 
     const radios = document.querySelectorAll('input[name="voted"]');
-
     radios.forEach(radio => {
-      radio.addEventListener("change", () => {
-        voted = radio.value
-      });
-    })    
+        radio.addEventListener("change", () => {
+            voted = radio.value;
+        });
+    });
+
+    timer(getTimeForNextStage(timestampVote), (time)=>{
+        document.getElementById("finalVoteTimer").innerText =
+            "La seleccion de mafioso PARA ECHARLO termina en " + time;
+
+        if(time == 1){
+            finishVoiceChat();
+            socket.send(JSON.stringify({roomId: roomId, type: "finalVoteSelect", voted: voted}));
+            clearGameUI();
+        }
+    });
+    
+
+}
+
+function discussionResult(mensaje, timestamp) {
+    showScreen("gameSection");
+
+    document.getElementById("gameTitle").textContent = mensaje;
+    document.getElementById("gameContent").innerHTML = `
+        <h3 id="discussionResultTimer"></h3>
+    `;
+
+    timer(getTimeForNextStage(timestamp), (time)=>{
+        document.getElementById("discussionResultTimer").innerText =
+            "Proxima etapa en " + time;
+
+        if(time == 1){
+            clearGameUI();
+        }
+    });
+}
+
+function nightResult(result, timestamp) {
+    showScreen("gameSection");
+
+    document.getElementById("gameTitle").textContent = result;
+    document.getElementById("gameContent").innerHTML = `
+        <h3 id="nightResultTimer"></h3>
+    `;
+
+    timer(getTimeForNextStage(timestamp), (time)=>{
+        document.getElementById("nightResultTimer").innerText =
+            "Votación final en " + time;
+
+        if(time == 1){
+            clearGameUI();
+        }
+    });
 }
 
 function guiltyAnswer(answer, timestamp) {
-    document.body.insertAdjacentHTML("beforeend",`
-        <div id="guiltyAnsweSeccion">
-                <center>
-                    <h2>${answer}</h2>
-                    <h3 id="guiltyAnswerTimer"></h3>
-                </center>
-        </div>`); 
-    let guiltyAnsweSeccion = document.getElementById("guiltyAnsweSeccion")
+    showScreen("gameSection");
+
+    document.getElementById("gameTitle").textContent = answer;
+    document.getElementById("gameContent").innerHTML = `
+        <h3 id="guiltyAnswerTimer"></h3>
+    `;
 
     timer(getTimeForNextStage(timestamp), (time)=>{
-        let timer = document.getElementById("guiltyAnswerTimer");
-        timer.innerText = "La confirmación de sospechas termina en " +time;
+        document.getElementById("guiltyAnswerTimer").innerText =
+            "La confirmación de sospechas termina en " + time;
 
         if(time == 1){
-            guiltyAnsweSeccion.remove();
+            clearGameUI();
         }
-    })
+    });
 }
 
 function selectGuilty(players, timestampGuilty){
-    let guilty = null;
+    showScreen("gameSection");
 
-    let guiltySeccion = document.getElementById("guiltySeccion")
-    if (!guiltySeccion){
-        document.body.insertAdjacentHTML("beforeend",`
-            <div id="guiltySeccion">
-                    <center>
-                        <h2>Selecciona quien sospechas que es el asesino</h2>
-                        <h3 id="guiltyTimer"></h3>
-                    </center>
-                <div id="guiltyOptions"></div>
-            </div>`); 
-        guiltySeccion = document.getElementById("guiltySeccion")
-    }
-    guiltySeccion.style.display = "block";
-    const optionsContainer = document.getElementById("guiltyOptions");
-    optionsContainer.innerHTML = "";
+    document.getElementById("gameTitle").textContent = "Selecciona quien sospechas que es el asesino";
+    document.getElementById("gameContent").innerHTML = `
+        <h3 id="guiltyTimer"></h3>
+    `;
+    const actions = document.getElementById("gameActions");
+    actions.innerHTML = "";             // limpiar contenido previo
 
-    timer(getTimeForNextStage(timestampGuilty), (time)=>{
-        let timer = document.getElementById("guiltyTimer")
-        timer.innerText = "La seleccion de sospecha termina en " +time;
+    let optionsContainer = document.createElement("div");
+    optionsContainer.id = "guiltyOptions";
+    actions.appendChild(optionsContainer);
 
-        if(time == 1){
-            guiltySeccion.style.display = "none";
-            socket.send(JSON.stringify({roomId: roomId, type: "guiltySelect", guilty: guilty}));
-        }
-    })
-
-    for(let g of players){
+    for(let v of players){
         optionsContainer.insertAdjacentHTML("beforeend", `
-        <label>
-            <input type="radio" name="guilty" value="${g}"> ${g}
-        </label>
-        <label id="${g}Count"></label>
-        <br>
-    `);
-
+            <label>
+                <input type="radio" name="guilty" value="${v}"> ${v}
+            </label>
+            <label id="${v}Count"></label>
+            <br>
+        `);
     }
 
     const radios = document.querySelectorAll('input[name="guilty"]');
-
     radios.forEach(radio => {
-      radio.addEventListener("change", () => {
-        guilty = radio.value
-      });
-    })    
+        radio.addEventListener("change", () => {
+            guilty = radio.value;
+        });
+    });
+
+    timer(getTimeForNextStage(timestampGuilty), (time)=>{
+        document.getElementById("guiltyTimer").innerText =
+            "La seleccion de sospecha termina en " + time;
+
+        if(time == 1){
+            socket.send(JSON.stringify({roomId: roomId, type: "guiltySelect", guilty: guilty}));
+            clearGameUI();
+        }
+    });
 }
 
 function savePlayer(players, timestampSave){
-    let saved = null;
+    showScreen("gameSection");
 
-    let saveSeccion = document.getElementById("saveSeccion")
-    if (!saveSeccion){
-        document.body.insertAdjacentHTML("beforeend",`
-            <div id="saveSeccion">
-                    <center>
-                        <h2>Selecciona a quien curar</h2>
-                        <h3 id="saveTimer"></h3>
-                    </center>
-                <div id="saveOptions"></div>
-            </div>`); 
-        saveSeccion = document.getElementById("saveSeccion")
+    document.getElementById("gameTitle").textContent = "Selecciona a quien curar";
+    document.getElementById("gameContent").innerHTML = `
+        <h3 id="saveTimer"></h3>
+    `;
+
+    const actions = document.getElementById("gameActions");
+    actions.innerHTML = "";             // limpiar contenido previo
+
+    let optionsContainer = document.createElement("div");
+    optionsContainer.id = "saveOptions";
+    actions.appendChild(optionsContainer);
+
+    for(let v of players){
+        optionsContainer.insertAdjacentHTML("beforeend", `
+            <label>
+                <input type="radio" name="saved" value="${v}"> ${v}
+            </label>
+            <label id="${v}Count"></label>
+            <br>
+        `);
     }
-    saveSeccion.style.display = "block";
-    const optionsContainer = document.getElementById("saveOptions");
-    optionsContainer.innerHTML = "";
+
+    let saved = null;
+    const radios = document.querySelectorAll('input[name="saved"]');
+    radios.forEach(radio => {
+        radio.addEventListener("change", () => {
+            saved = radio.value;
+        });
+    });
 
     timer(getTimeForNextStage(timestampSave), (time)=>{
-        let timer = document.getElementById("saveTimer")
-        timer.innerText = "La seleccion de salvado termina en " + time;
+        document.getElementById("saveTimer").innerText =
+            "La seleccion de salvado termina en " + time;
 
         if(time == 1){
-            saveSeccion.style.display = "none";
             socket.send(JSON.stringify({roomId: roomId, type: "saveSelect", saved: saved}));
+            clearGameUI();
         }
-    })
-
-    for(let save of players){
-        optionsContainer.insertAdjacentHTML("beforeend", `
-        <label>
-            <input type="radio" name="saved" value="${save}"> ${save}
-        </label>
-        <label id="${save}Count"></label>
-        <br>
-    `);
-
-    }
-
-    const radios = document.querySelectorAll('input[name="saved"]');
-
-    radios.forEach(radio => {
-      radio.addEventListener("change", () => {
-        saved = radio.value
-      });
-    })
+    });
 }
 
 function selectVictim(victims, timestampSelectVictim){
     startVoiceChat();
+    showScreen("gameSection");
     let victim = null;
 
-    let victimSeccion = document.getElementById("victimSeccion")
-    if (!victimSeccion){
-        document.body.insertAdjacentHTML("beforeend",`
-            <div id="victimSeccion">
-                    <center>
-                        <h2>Selecciona tu victima</h2>
-                        <h3 id="victimTimer"></h3>
-                    </center>
-                <div id="victimOptions"></div>
-            </div>`); 
-        victimSeccion = document.getElementById("victimSeccion")
-    } 
+    document.getElementById("gameTitle").textContent = "Selecciona tu víctima";
 
-    victimSeccion.style.display = "block" ; 
-    const optionsContainer = document.getElementById("victimOptions");
-    optionsContainer.innerHTML = "";
+    document.getElementById("gameContent").innerHTML = `
+        <h3 id="victimTimer"></h3>
+    `;
 
-    timer(getTimeForNextStage(timestampSelectVictim), (time)=>{
-        let timer = document.getElementById("victimTimer")
-        timer.innerText = "La seleccion de victima termina en " +time;
-        
-        if(time == 1){
-             finishVoiceChat();
-            victimSeccion.style.display = "none";
-            socket.send(JSON.stringify({type: "victimSelect",roomId: roomId, victim: victim}));
-        }
-    })
+    const actions = document.getElementById("gameActions");
+    actions.innerHTML = ""; // limpiar contenido previo
 
-    for(let victim of victims){
+    let optionsContainer = document.createElement("div");
+    optionsContainer.id = "victimOptions";
+    actions.appendChild(optionsContainer);
+
+    for(let v of victims){
         optionsContainer.insertAdjacentHTML("beforeend", `
-        <label>
-            <input type="radio" name="victim" value="${victim}"> ${victim}
-        </label>
-        <label id="${victim}Count"></label>
-        <br>
-    `);
+            <label>
+                <input type="radio" name="victim" value="${v}"> ${v}
+            </label>
+            <label id="${v}Count"></label>
+            <br>
+        `);
     }
 
     const radios = document.querySelectorAll('input[name="victim"]');
     radios.forEach(radio => {
-      radio.addEventListener("change", () => {
-        victim = radio.value
-      });
-    })
+        radio.addEventListener("change", () => {
+            victim = radio.value;
+        });
+    });
+
+    timer(getTimeForNextStage(timestampSelectVictim), (time)=>{
+        document.getElementById("victimTimer").innerText =
+            "La selección de víctima termina en " + time;
+
+        if(time == 1){
+            finishVoiceChat();
+            socket.send(JSON.stringify({ type: "victimSelect",roomId: roomId,victim: victim }));
+            clearGameUI();
+        }
+    });
 }
 
 function timer(time, fn){
