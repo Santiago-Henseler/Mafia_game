@@ -116,7 +116,14 @@ defmodule Lmafia.Mafia do
     {:ok, json} = Jason.encode(%{type: "action", action: "nightResult", result: result, timestamp_night_result: timestamp})
     multicast(get_jugadores(:all, gameInfo), json)
 
-    Process.send_after(self(), :discussion, Timing.get_time(:preDiscussion))
+    # Decision pre discusion
+    delay = Timing.get_time(:preDiscussion)
+    case decision_final_juego(gameInfo) do
+      :goodEnding -> Process.send_after(self(), :goodEnding, delay)
+      :badEnding -> Process.send_after(self(), :badEnding, delay)
+      _ -> Process.send_after(self(), :discussion, delay)
+    end
+
     {:noreply, gameInfo}
   end
 
@@ -136,6 +143,7 @@ defmodule Lmafia.Mafia do
     gameInfo = user_pasa_a_muertos(gameInfo,echado)
     mensaje =
       if echado do
+        unicast_jugador(:linchado,gameInfo,echado)
         "Decision final: " <> echado <> " fue linchado"
       else
         "Decision final: Nadie fue linchado"
@@ -143,33 +151,20 @@ defmodule Lmafia.Mafia do
 
     timestamp = Timing.get_timestamp_stage(:transicion)
     users = get_jugadores(:all, gameInfo)
-    {:ok, json} = Jason.encode(%{type: "action", action: "discusionResult", mensaje: mensaje, timestamp_define_discusion: timestamp})
+    {:ok, json} = Jason.encode(%{type: "action", action: "discusionResult", mensaje: mensaje, timestamp: timestamp})
     multicast(users,json)
 
-    Process.send_after(self(), {:endDiscussion, echado}, Timing.get_time(:transicion))
+    Process.send_after(self(), :endDiscussion, Timing.get_time(:transicion))
     {:noreply, gameInfo}
   end
 
-  def handle_info({:endDiscussion, echado}, gameInfo) do
-    # Si hubo quorum para echar a alguien, se lo echa
-    gameInfo = user_pasa_a_muertos(gameInfo, echado)
-
-    # Definicion final
-    # Si cant mafiosos >= cant resto  -> Ganaron los mafiosos
-    # Si cant mafiosos = 0            -> Gano el pueblo
-    # Sino, sigue el juego
-    cant_mafiosos = get_len_vivos(:mafiosos, gameInfo)
-    cant_pueblo = get_len_vivos(:pueblo, gameInfo)
-
-    timestamp = Timing.get_time(:transicion)
-    cond do
-      cant_mafiosos == 0 ->
-        Process.send_after(self(), :goodEnding, timestamp)
-      cant_mafiosos >= cant_pueblo ->
-        Process.send_after(self(), :badEnding, timestamp)
-      true ->
-        Process.send_after(self(), :selectVictim, timestamp)
-      end
+  def handle_info(:endDiscussion, gameInfo) do
+    delay = Timing.get_time(:transicion)
+    case decision_final_juego(gameInfo) do
+      :goodEnding -> Process.send_after(self(), :goodEnding, delay)
+      :badEnding -> Process.send_after(self(), :badEnding, delay)
+      _ -> Process.send_after(self(), :selectVictim, delay)
+    end
 
     {:noreply, gameInfo}
   end
@@ -257,9 +252,9 @@ defmodule Lmafia.Mafia do
     [ Enum.find( get_jugadores(:all,gameInfo), fn p -> p.userName == jugador end) ]
   end
 
-  defp unicast_jugador(:echado,gameInfo, username) do 
+  defp unicast_jugador(:linchado,gameInfo, username) do 
     jugador = get_jugador(gameInfo,username)
-    {:ok, json} = Jason.encode(%{type: "characterSet", character: "Muerto"})
+    {:ok, json} = Jason.encode(%{type: "characterSet", character: "Linchado"})
     multicast(jugador, json)
   end
 
@@ -314,6 +309,8 @@ defmodule Lmafia.Mafia do
     result <> if sobredosis != nil do
       Enum.each(sobredosis, fn x -> unicast_jugador(:muerto, gameInfo, x) end)
       "\nMuertos por sobredosis:\n" <> Enum.join(sobredosis, "\n")
+    else 
+      ""
     end
 
     gameInfo = Enum.reduce(sobredosis, gameInfo, fn name, gi -> user_pasa_a_muertos(gi, name) end)
@@ -335,6 +332,21 @@ defmodule Lmafia.Mafia do
 
   defp format_isMafia_answer(isMafia,player) do
     "#{player}#{if isMafia, do: "", else: " no"} es un mafioso"
+  end
+
+  defp decision_final_juego(gameInfo) do
+    # Definicion final
+    # Si cant mafiosos >= cant resto  -> Ganaron los mafiosos
+    # Si cant mafiosos = 0            -> Gano el pueblo
+    # Sino, sigue el juego
+    cant_mafiosos = get_len_vivos(:mafiosos, gameInfo)
+    cant_pueblo = get_len_vivos(:pueblo, gameInfo)
+
+    cond do
+      cant_mafiosos == 0 -> :goodEnding
+      cant_mafiosos >= cant_pueblo -> :badEnding
+      true -> :gameNotFinished
+    end
   end
 
 end

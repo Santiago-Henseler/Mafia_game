@@ -7,6 +7,7 @@ function getImage(characterType){
         case "Policia": return 'img/policia.jpg';
         case "Aldeano": return 'img/campesino.jpg';
         case "Muerto": return 'img/muerto.jpeg';
+        case "Linchado": return 'img/linchado.jpg';
         default: console.log("Tipo de personaje "+characterType+" no encontrado");
     }
 }
@@ -67,7 +68,7 @@ function doAction(action){
             discusion(action.players, action.timestamp_final_discusion)
             break;
         case "discusionResult":
-            alert(action.mensaje)
+            discussionResult(action.mensaje, action.timestamp)
             break;
         case "goodEnding":
             alert(action.mensaje)
@@ -125,6 +126,24 @@ function discusion(players, timestampVote) {
     });
     
 
+}
+
+function discussionResult(mensaje, timestamp) {
+    showScreen("gameSection");
+
+    document.getElementById("gameTitle").textContent = mensaje;
+    document.getElementById("gameContent").innerHTML = `
+        <h3 id="discussionResultTimer"></h3>
+    `;
+
+    timer(getTimeForNextStage(timestamp), (time)=>{
+        document.getElementById("discussionResultTimer").innerText =
+            "Proxima etapa en " + time;
+
+        if(time == 1){
+            clearGameUI();
+        }
+    });
 }
 
 function nightResult(result, timestamp) {
