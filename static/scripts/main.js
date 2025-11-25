@@ -47,7 +47,9 @@ function connectWebSocket(){
                 break;
             case "characterSet": 
                 setCharacter(data.character);
-                startGame(data.timestamp_game_starts);
+                if ( data.character != "Muerto" && data.character != "Linchado" ) {
+                    startGame(data.timestamp_game_starts);
+                }
                 break;
             case "action":
                 doAction(data);

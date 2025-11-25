@@ -113,9 +113,8 @@ defmodule Lmafia.Mafia do
     {result,gameInfo} = night_result(gameInfo)
     IO.puts result
     timestamp = Timing.get_timestamp_stage(:preDiscussion)
-    players = get_jugadores(:all, gameInfo)
-    {:ok, json} = Jason.encode(%{type: "action", action: "nightResult", result: result, timestamp_select_guilty: timestamp})
-    multicast(players, json)
+    {:ok, json} = Jason.encode(%{type: "action", action: "nightResult", result: result, timestamp_night_result: timestamp})
+    multicast(get_jugadores(:all, gameInfo), json)
 
     Process.send_after(self(), :discussion, Timing.get_time(:preDiscussion))
     {:noreply, gameInfo}
@@ -253,10 +252,25 @@ defmodule Lmafia.Mafia do
     characters
   end
 
+  defp get_jugador(gameInfo,jugador) do
+    dbg get_jugadores(:all,gameInfo)
+    [ Enum.find( get_jugadores(:all,gameInfo), fn p -> p.userName == jugador end) ]
+  end
+
+  defp unicast_jugador(:echado,gameInfo, username) do 
+    jugador = get_jugador(gameInfo,username)
+    {:ok, json} = Jason.encode(%{type: "characterSet", character: "Muerto"})
+    multicast(jugador, json)
+  end
+
+  defp unicast_jugador(:muerto,gameInfo, username) do 
+    jugador = get_jugador(gameInfo,username)
+    {:ok, json} = Jason.encode(%{type: "characterSet", character: "Muerto"})
+    multicast(jugador, json)
+  end
+
   defp multicast(clientes, mensaje_json) do
-    Enum.each(clientes, fn x ->
-      send(x.pid, {:msg, mensaje_json})
-    end)
+    Enum.each(clientes, fn x -> send(x.pid, {:msg, mensaje_json}) end)
   end
 
   defp getWin(gameInfo, stage) do
@@ -267,23 +281,29 @@ defmodule Lmafia.Mafia do
   end
 
   defp night_result(gameInfo) do
-    result =
-      if gameInfo.victimSelect do
-        if gameInfo.victimSelect in gameInfo.saveSelect do
-          "La mafia quiso asesinar a " <> gameInfo.victimSelect <> " pero fue salvado por los médicos"
-        else
-          gameInfo = user_pasa_a_muertos(gameInfo, gameInfo.victimSelect)
-          base = "La mafia asesinó a " <> gameInfo.victimSelect
-
-          if gameInfo.victimSelect in gameInfo.sobredosis do
-            base <> " y mientras agonizaba recibió una sobredosis de cura"
-          else
-            base
-          end
-        end
+    {result, gameInfo} = 
+    if gameInfo.victimSelect do
+      if gameInfo.victimSelect in gameInfo.saveSelect do
+        result = "La mafia quiso asesinar a " <> gameInfo.victimSelect <> " pero fue salvado por los médicos"
+        {result,gameInfo}
       else
-        "La mafia no asesinó a nadie"
+        result = "La mafia asesinó a " <> gameInfo.victimSelect
+
+        result <> if gameInfo.victimSelect in gameInfo.sobredosis do
+          " y mientras agonizaba recibió una sobredosis de cura"
+        else 
+          ""
+        end
+
+        # Notificar a jugador que esta muerto
+        gameInfo = user_pasa_a_muertos(gameInfo, gameInfo.victimSelect)
+        unicast_jugador(:muerto,gameInfo,gameInfo.victimSelect)
+  
+        {result,gameInfo}
       end
+    else
+      {"La mafia no asesinó a nadie",gameInfo}
+    end
 
     sobredosis =
       for name <- gameInfo.sobredosis,
@@ -291,16 +311,12 @@ defmodule Lmafia.Mafia do
         name
       end
 
-    result = if sobredosis != nil do
-      result <> "\nMuertos por sobredosis:\n" <> Enum.join(sobredosis, "\n")
-    else
-      result
+    result <> if sobredosis != nil do
+      Enum.each(sobredosis, fn x -> unicast_jugador(:muerto, gameInfo, x) end)
+      "\nMuertos por sobredosis:\n" <> Enum.join(sobredosis, "\n")
     end
 
-    gameInfo = Enum.reduce(sobredosis, gameInfo, fn name, gi ->
-      user_pasa_a_muertos(gi, name)
-    end)
-
+    gameInfo = Enum.reduce(sobredosis, gameInfo, fn name, gi -> user_pasa_a_muertos(gi, name) end)
     {result, reset_selectors(gameInfo)}
   end
 

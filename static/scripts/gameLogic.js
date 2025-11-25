@@ -6,6 +6,7 @@ function getImage(characterType){
         case "Medico": return 'img/medico.jpg';
         case "Policia": return 'img/policia.jpg';
         case "Aldeano": return 'img/campesino.jpg';
+        case "Muerto": return 'img/muerto.jpeg';
         default: console.log("Tipo de personaje "+characterType+" no encontrado");
     }
 }
@@ -58,6 +59,9 @@ function doAction(action){
             break;
         case "guiltyAnswer":
             guiltyAnswer(action.answer, action.timestamp_guilty_answer)
+            break;
+        case "nightResult":
+            nightResult(action.result, action.timestamp_night_result)
             break;
         case "discusion":
             discusion(action.players, action.timestamp_final_discusion)
@@ -121,6 +125,24 @@ function discusion(players, timestampVote) {
     });
     
 
+}
+
+function nightResult(result, timestamp) {
+    showScreen("gameSection");
+
+    document.getElementById("gameTitle").textContent = result;
+    document.getElementById("gameContent").innerHTML = `
+        <h3 id="nightResultTimer"></h3>
+    `;
+
+    timer(getTimeForNextStage(timestamp), (time)=>{
+        document.getElementById("nightResultTimer").innerText =
+            "Votación final en " + time;
+
+        if(time == 1){
+            clearGameUI();
+        }
+    });
 }
 
 function guiltyAnswer(answer, timestamp) {
