@@ -27,6 +27,8 @@ function showScreen(id) {
         document.getElementById(s).classList.add("d-none");
     });
     document.getElementById(id).classList.remove("d-none");
+
+    document.body.classList.add("gameplay-active");
 }
 
 

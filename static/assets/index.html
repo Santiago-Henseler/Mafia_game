@@ -4,6 +4,112 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Mafia</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+
+    #gameSection .game-panel {
+        background: rgba(0, 0, 0, 0.55);
+        border: 1px solid rgba(255,255,255,0.12);
+        backdrop-filter: blur(8px);
+        padding: 25px;
+        border-radius: 18px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.4);
+        animation: fadeIn 0.4s ease;
+    }
+
+    /* Make the global header readable on any background */
+    .banner-header {
+        position: relative;
+        z-index: 10;
+    }
+    
+    /* Overlay behind the header to improve text contrast */
+    .banner-header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.75),
+            rgba(0, 0, 0, 0.35)
+        );
+        z-index: -1;
+    }
+    
+    /* Improve title readability */
+    .banner-header h1 {
+        color: white;
+        text-shadow: 0 0 12px black, 0 0 4px black;
+    }
+
+    #gameSection h2, 
+    #gameSection h3, 
+    #gameSection h4, 
+    #gameSection p {
+        text-shadow: 0 0 4px black;
+        color: #ffffff;
+    }
+
+    .game-title {
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        color: #00dfff;
+        text-shadow: 0 0 6px rgba(0,200,255,0.7);
+    }
+
+    .game-timer {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 10px;
+        color: #ffdf6d;
+        text-shadow: 0 0 6px rgba(255,200,0,0.7);
+    }
+
+    .select-option {
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 14px 20px;
+        border-radius: 12px;
+        cursor: pointer;
+        margin-bottom: 12px;
+        transition: 0.15s ease-in-out;
+        font-size: 1.1rem;
+        backdrop-filter: blur(4px);
+    }
+
+    .select-option:hover {
+        background: rgba(255,255,255,0.18);
+        transform: scale(1.02);
+    }
+
+    .select-option.selected {
+        background: rgba(0,170,255,0.25);
+        border-color: #00c5ff;
+        box-shadow: 0 0 12px rgba(0,200,255,0.6);
+        transform: scale(1.03);
+    }
+
+    .select-option input[type="radio"] {
+        display: none;
+    }
+
+    .fade-in {
+        animation: fadeIn 0.35s ease both;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(4px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    </style>
+
+
 </head>
 <body class="bg-dark text-light d-flex flex-column min-vh-100  ">
     <header class="py-4 mb-4 text-center border-bottom border-secondary banner-header">
@@ -48,10 +154,10 @@
 
     </div>
 
-    <div id="gameSection" class="container d-none flex-grow-1">
-        <div class="card bg-secondary bg-opacity-25 shadow-lg p-4 mt-4"
-             style="max-width: 650px; margin: auto; border-radius: 1rem;">
-    
+    <div id="gameSection" class="container d-none d-flex justify-content-center align-items-center flex-grow-1">
+        <div class="game-panel text-center" style="max-width: 650px; width: 100%;">
+            <h1 id="gameMafiaTitle" class="display-4 fw-bold mb-3 fade-in" style="letter-spacing: 2px;">Mafia</h1>
+
             <h3 class="text-center">Sala <span id="gameRoomId"></span></h3>
             <p id="gamePlayers" class="text-center text-info fw-bold"></p>
     
