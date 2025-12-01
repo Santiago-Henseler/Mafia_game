@@ -90,28 +90,14 @@ function discusion(players, timestampVote) {
     `;
 
     const actions = document.getElementById("gameActions");
-    actions.innerHTML = ""; // limpiar contenido previo
 
     let optionsContainer = document.createElement("div");
     optionsContainer.id = "finalVoteOptions";
     actions.appendChild(optionsContainer);
 
     let voted = null;
-    for(let p of players){
-        optionsContainer.insertAdjacentHTML("beforeend", `
-            <label>
-                <input type="radio" name="voted" value="${p}"> ${p}
-            </label>
-            <label id="${p}Count"></label>
-            <br>
-        `);
-    }
-
-    const radios = document.querySelectorAll('input[name="voted"]');
-    radios.forEach(radio => {
-        radio.addEventListener("change", () => {
-            voted = radio.value;
-        });
+    setRadiosHelper("finalVoteOptions",players,"finalvote", (value) => { 
+        voted=value;
     });
 
     timer(getTimeForNextStage(timestampVote), (time)=>{
@@ -124,8 +110,6 @@ function discusion(players, timestampVote) {
             clearGameUI();
         }
     });
-    
-
 }
 
 function discussionResult(mensaje, timestamp) {
@@ -190,27 +174,14 @@ function selectGuilty(players, timestampGuilty){
         <h3 id="guiltyTimer"></h3>
     `;
     const actions = document.getElementById("gameActions");
-    actions.innerHTML = "";             // limpiar contenido previo
 
     let optionsContainer = document.createElement("div");
     optionsContainer.id = "guiltyOptions";
     actions.appendChild(optionsContainer);
 
-    for(let v of players){
-        optionsContainer.insertAdjacentHTML("beforeend", `
-            <label>
-                <input type="radio" name="guilty" value="${v}"> ${v}
-            </label>
-            <label id="${v}Count"></label>
-            <br>
-        `);
-    }
-
-    const radios = document.querySelectorAll('input[name="guilty"]');
-    radios.forEach(radio => {
-        radio.addEventListener("change", () => {
-            guilty = radio.value;
-        });
+    let guilty = null;
+    setRadiosHelper("guiltyOptions",players,"guilty", (value) => { 
+        guilty=value;
     });
 
     timer(getTimeForNextStage(timestampGuilty), (time)=>{
@@ -233,28 +204,14 @@ function savePlayer(players, timestampSave){
     `;
 
     const actions = document.getElementById("gameActions");
-    actions.innerHTML = "";             // limpiar contenido previo
 
     let optionsContainer = document.createElement("div");
     optionsContainer.id = "saveOptions";
     actions.appendChild(optionsContainer);
 
-    for(let v of players){
-        optionsContainer.insertAdjacentHTML("beforeend", `
-            <label>
-                <input type="radio" name="saved" value="${v}"> ${v}
-            </label>
-            <label id="${v}Count"></label>
-            <br>
-        `);
-    }
-
     let saved = null;
-    const radios = document.querySelectorAll('input[name="saved"]');
-    radios.forEach(radio => {
-        radio.addEventListener("change", () => {
-            saved = radio.value;
-        });
+    setRadiosHelper("saveOptions",players,"saved", (value) => { 
+        saved=value;
     });
 
     timer(getTimeForNextStage(timestampSave), (time)=>{
@@ -271,7 +228,6 @@ function savePlayer(players, timestampSave){
 function selectVictim(victims, timestampSelectVictim){
     startVoiceChat();
     showScreen("gameSection");
-    let victim = null;
 
     document.getElementById("gameTitle").textContent = "Selecciona tu víctima";
 
@@ -280,27 +236,14 @@ function selectVictim(victims, timestampSelectVictim){
     `;
 
     const actions = document.getElementById("gameActions");
-    actions.innerHTML = ""; // limpiar contenido previo
 
     let optionsContainer = document.createElement("div");
     optionsContainer.id = "victimOptions";
     actions.appendChild(optionsContainer);
 
-    for(let v of victims){
-        optionsContainer.insertAdjacentHTML("beforeend", `
-            <label>
-                <input type="radio" name="victim" value="${v}"> ${v}
-            </label>
-            <label id="${v}Count"></label>
-            <br>
-        `);
-    }
-
-    const radios = document.querySelectorAll('input[name="victim"]');
-    radios.forEach(radio => {
-        radio.addEventListener("change", () => {
-            victim = radio.value;
-        });
+    let victim = null;
+    setRadiosHelper("victimOptions",victims,"victim", (value) => { 
+        victim=value;
     });
 
     timer(getTimeForNextStage(timestampSelectVictim), (time)=>{
@@ -337,4 +280,40 @@ function getTimeForNextStage(timestampNextStage) {
         console.warn("Este cliente se quedo detras por " + result + " segundos")
         return 1 
     }
+}
+
+
+function setRadiosHelper(containerId, list, groupName, onChangeCallback) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = ""; 
+    
+    list.forEach(name => {
+        const id = `opt-${groupName}-${name}`;
+
+        container.insertAdjacentHTML(
+            "beforeend",
+            `
+            <label class="select-option fade-in" id="${id}">
+                <input type="radio" name="${groupName}" value="${name}">
+                <strong>${name}</strong>
+            </label>
+            `
+        );
+    });
+
+    // Attach events
+    const radios = document.querySelectorAll(`input[name="${groupName}"]`);
+    radios.forEach(radio => {
+        radio.addEventListener("change", () => {
+            // visual effect
+            document
+                .querySelectorAll(`label.select-option`)
+                .forEach(l => l.classList.remove("selected"));
+
+            radio.parentElement.classList.add("selected");
+
+            // callback with selected value
+            onChangeCallback(radio.value);
+        });
+    });
 }
