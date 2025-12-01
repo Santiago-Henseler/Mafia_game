@@ -16,6 +16,34 @@
         animation: fadeIn 0.4s ease;
     }
 
+    /* Make the global header readable on any background */
+    .banner-header {
+        position: relative;
+        z-index: 10;
+    }
+    
+    /* Overlay behind the header to improve text contrast */
+    .banner-header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.75),
+            rgba(0, 0, 0, 0.35)
+        );
+        z-index: -1;
+    }
+    
+    /* Improve title readability */
+    .banner-header h1 {
+        color: white;
+        text-shadow: 0 0 12px black, 0 0 4px black;
+    }
+
     #gameSection h2, 
     #gameSection h3, 
     #gameSection h4, 
