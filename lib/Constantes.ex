@@ -11,6 +11,7 @@ defmodule Constantes do
     @tiempo_debate_final 18000     #  3 minutos
 
     @port 4000
+    @publicport 8080
 
     defmacro nALDEANOS, do: @aldeanos
     defmacro nMAFIOSOS, do: @mafiosos
@@ -24,6 +25,7 @@ defmodule Constantes do
     defmacro tDEBATE_FINAL, do: @tiempo_debate_final
 
     defmacro ePORT, do: @port
+    defmacro pPORT, do: @publicport
 end
 
 defmodule Timing do
