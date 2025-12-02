@@ -22,10 +22,18 @@ defmodule App do
     ]
 
     children = [
-      {Plug.Cowboy,
-       scheme: :http,
-       plug: Mweb.Ruta,
-       options: [port: Constantes.ePORT, dispatch: dispatch]},
+      {
+        Plug.Cowboy,
+        scheme: :http,
+        plug: Mweb.Ruta,
+        options: [port: Constantes.ePORT, dispatch: dispatch]
+      },
+      {
+        Plug.Cowboy,
+        scheme: :http,
+        plug: Mweb.RutaPublica,
+        options: [port: Constantes.pPORT]
+      }    
     ]
 
     opts = [strategy: :one_for_one, name: Mweb.Supervisor]

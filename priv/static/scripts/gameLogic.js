@@ -2,12 +2,12 @@ let character = null;
 
 function getImage(characterType){
     switch(characterType){
-        case "Mafioso": return 'img/mafia.jpg';
-        case "Medico": return 'img/medico.jpg';
-        case "Policia": return 'img/policia.jpg';
-        case "Aldeano": return 'img/campesino.jpg';
-        case "Muerto": return 'img/muerto.jpeg';
-        case "Linchado": return 'img/linchado.jpg';
+        case "Mafioso": return 'static/assets/img/mafia.jpg';
+        case "Medico": return 'static/assets/img/medico.jpg';
+        case "Policia": return 'static/assets/img/policia.jpg';
+        case "Aldeano": return 'static/assets/img/campesino.jpg';
+        case "Muerto": return 'static/assets/img/muerto.jpeg';
+        case "Linchado": return 'static/assets/img/linchado.jpg';
         default: console.log("Tipo de personaje "+characterType+" no encontrado");
     }
 }
