@@ -6,6 +6,14 @@ defmodule Mweb.RutaPublica do
   plug :match        
   plug :dispatch     
 
+
+  get "/index.html" do
+    file = :code.priv_dir(:m_web)
+      |> Path.join("static/assets/index.html")
+    
+      send_file(conn, 200, file)
+  end
+
   get "/" do
     file = :code.priv_dir(:m_web)
       |> Path.join("static/assets/index.html")
