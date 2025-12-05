@@ -11,7 +11,6 @@ function startVoiceChat(){
       
     webSocketVoiceChat.onopen = _ => startConnection(peerConection);
     webSocketVoiceChat.onmessage = async event => messageEvent(event, peerConection);
-    // webSocketVoiceChat.onclose = event => console.log("[DEBUG]: WebSocket connection was terminated", event);
 }
 
 function finishVoiceChat(){

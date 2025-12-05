@@ -5,10 +5,10 @@ defmodule Constantes do
     @policias 1
     @medicos 1
 
-    @tiempo_transicion_estado 1000  #  1 segundo
+    @tiempo_transicion_estado 10000  #  10 segundos
     @tiempo_inicio_partida 10000    # 10 segundos
-    @tiempo_debate_grupo 15000      #  1 minuto
-    @tiempo_debate_final 18000     #  3 minutos
+    @tiempo_debate_grupo 35000      #  35 segundos
+    @tiempo_debate_final 40000     #  40 segundos
 
     @port 4000
     @publicport 8080

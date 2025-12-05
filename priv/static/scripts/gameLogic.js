@@ -13,14 +13,26 @@ function getImage(characterType){
 }
 
 function setCharacter(characterType) {
-    document.body.style.backgroundImage = `url('${getImage(characterType)}')`;
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundRepeat = "no-repeat";
-    document.body.style.backgroundPosition = "center center";
+
+    document.getElementById("gameTitle").textContent = characterType;
+
+    document.body.innerHTML += `<style>
+        .banner-header {
+            height: 350px;
+            background-image: url(${getImage(characterType)});
+            background-size:100% 100%;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-color: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>`
 }
 
 function startGame(timestampGameStarts) {
-
 
     showScreen("gameSection");
 
@@ -42,6 +54,7 @@ function startGame(timestampGameStarts) {
         if(time === 1){
             timerLabel.remove();        
             document.getElementById("gameTitle").textContent = "";
+            document.getElementById("gamePlayers").textContent = "";
         }
     });
 }
@@ -71,9 +84,11 @@ function doAction(action){
             discussionResult(action.mensaje, action.timestamp)
             break;
         case "goodEnding":
+            // TODO
             alert(action.mensaje)
             break;
         case "badEnding":
+            // TODO
             alert(action.mensaje)
             break;
         default: break;
@@ -84,7 +99,7 @@ function discusion(players, timestampVote) {
     startVoiceChat();
     showScreen("gameSection");
 
-    document.getElementById("gameTitle").textContent = "Selecciona quien crees que es un mafioso";
+    document.getElementById("text-center").textContent = "Selecciona quien crees que es un mafioso";
     document.getElementById("gameContent").innerHTML = `
         <h3 id="finalVoteTimer"></h3>
     `;
@@ -133,7 +148,7 @@ function discussionResult(mensaje, timestamp) {
 function nightResult(result, timestamp) {
     showScreen("gameSection");
 
-    document.getElementById("gameTitle").textContent = result;
+    document.getElementById("text-center").textContent = result;
     document.getElementById("gameContent").innerHTML = `
         <h3 id="nightResultTimer"></h3>
     `;
@@ -151,7 +166,7 @@ function nightResult(result, timestamp) {
 function guiltyAnswer(answer, timestamp) {
     showScreen("gameSection");
 
-    document.getElementById("gameTitle").textContent = answer;
+    document.getElementById("text-center").textContent = answer;
     document.getElementById("gameContent").innerHTML = `
         <h3 id="guiltyAnswerTimer"></h3>
     `;
@@ -169,7 +184,7 @@ function guiltyAnswer(answer, timestamp) {
 function selectGuilty(players, timestampGuilty){
     showScreen("gameSection");
 
-    document.getElementById("gameTitle").textContent = "Selecciona quien sospechas que es el asesino";
+    document.getElementById("text-center").textContent = "Selecciona quien sospechas que es el asesino";
     document.getElementById("gameContent").innerHTML = `
         <h3 id="guiltyTimer"></h3>
     `;
@@ -198,7 +213,7 @@ function selectGuilty(players, timestampGuilty){
 function savePlayer(players, timestampSave){
     showScreen("gameSection");
 
-    document.getElementById("gameTitle").textContent = "Selecciona a quien curar";
+    document.getElementById("text-center").textContent = "Selecciona a quien curar";
     document.getElementById("gameContent").innerHTML = `
         <h3 id="saveTimer"></h3>
     `;
@@ -229,7 +244,7 @@ function selectVictim(victims, timestampSelectVictim){
     startVoiceChat();
     showScreen("gameSection");
 
-    document.getElementById("gameTitle").textContent = "Selecciona tu víctima";
+    document.getElementById("text-center").textContent = "Selecciona tu víctima";
 
     document.getElementById("gameContent").innerHTML = `
         <h3 id="victimTimer"></h3>
@@ -266,7 +281,6 @@ function timer(time, fn){
             clearInterval(cuentaRegresiva);
         }
     }, 1000);
-
 }
 
 function getTimeForNextStage(timestampNextStage) {
