@@ -1,7 +1,7 @@
-const IP = "localhost"; //"3.139.220.52";
+const IP = "mafia.3.139.220.52.sslip.io";
 const PUERTO = 4000;
-const WEB_URL = `http://${IP}:${PUERTO}`;
-const WS_URL = `ws://${IP}:${PUERTO}`;
+const WEB_URL = `https://${IP}:${PUERTO}`;
+const WS_URL = `wss://${IP}:${PUERTO}`;
 
 let roomId = null;
 let socket = null;
