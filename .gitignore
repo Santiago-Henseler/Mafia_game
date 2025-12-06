@@ -26,3 +26,5 @@ voice_chat-*.tar
 /tmp/
 
 /.elixir_ls/
+
+*.pem
