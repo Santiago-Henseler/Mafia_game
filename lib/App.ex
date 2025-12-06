@@ -24,15 +24,26 @@ defmodule App do
     children = [
       {
         Plug.Cowboy,
-        scheme: :http,
+        scheme: :https,
         plug: Mweb.Ruta,
-        options: [port: Constantes.ePORT, dispatch: dispatch]
+        options: [
+                      cipher_suite: :strong,
+                keyfile: "/home/ec2-user/Mafia_game/priv/certs/privkey.pem",
+                      certfile: "/home/ec2-user/Mafia_game/priv/certs/fullchain.pem",
+                      port: Constantes.ePORT, 
+                      dispatch: dispatch
+        ]
       },
       {
         Plug.Cowboy,
-        scheme: :http,
+        scheme: :https,
         plug: Mweb.RutaPublica,
-        options: [port: Constantes.pPORT]
+        options: [
+                      cipher_suite: :strong,
+                      keyfile: "/home/ec2-user/Mafia_game/priv/certs/privkey.pem",
+                      certfile: "/home/ec2-user/Mafia_game/priv/certs/fullchain.pem",
+                      port: Constantes.pPORT
+        ]
       }    
     ]
 
