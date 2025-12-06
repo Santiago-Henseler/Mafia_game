@@ -20,34 +20,30 @@ defmodule App do
          {:_, Plug.Cowboy.Handler, {Mweb.Ruta, []}}
        ]}
     ]
-	
-          cipher_suite: :strong,
-          keyfile: "/etc/letsencrypt/live/myapp.3.139.220.52.sslip.io/privkey.pem",
-          certfile: "/etc/letsencrypt/live/myapp.3.139.220.52.sslip.io/fullchain.pem",
-          dispatch: dispatch
+
     children = [
       {
         Plug.Cowboy,
         scheme: :https,
         plug: Mweb.Ruta,
         options: [
-		cipher_suite: :strong,
-		keyfile: "/etc/letsencrypt/live/myapp.3.139.220.52.sslip.io/privkey.pem",
-		certfile: "/etc/letsencrypt/live/myapp.3.139.220.52.sslip.io/fullchain.pem",
-		port: Constantes.ePORT, 
-		dispatch: dispatch
-	]
+		      cipher_suite: :strong,
+      		keyfile: "/etc/letsencrypt/live/myapp.3.139.220.52.sslip.io/privkey.pem",
+		      certfile: "/etc/letsencrypt/live/myapp.3.139.220.52.sslip.io/fullchain.pem",
+		      port: Constantes.ePORT, 
+		      dispatch: dispatch
+      	]
       },
       {
         Plug.Cowboy,
         scheme: :https,
         plug: Mweb.RutaPublica,
         options: [
-		cipher_suite: :strong,
-		keyfile: "/etc/letsencrypt/live/myapp.3.139.220.52.sslip.io/privkey.pem",
-		certfile: "/etc/letsencrypt/live/myapp.3.139.220.52.sslip.io/fullchain.pem",
-		port: Constantes.pPORT
-	]
+		      cipher_suite: :strong,
+		      keyfile: "/etc/letsencrypt/live/myapp.3.139.220.52.sslip.io/privkey.pem",
+		      certfile: "/etc/letsencrypt/live/myapp.3.139.220.52.sslip.io/fullchain.pem",
+		      port: Constantes.pPORT
+      	]
       }    
     ]
 
