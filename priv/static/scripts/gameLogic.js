@@ -84,17 +84,25 @@ function doAction(action){
             discussionResult(action.mensaje, action.timestamp)
             break;
         case "goodEnding":
-            // TODO
-            alert(action.mensaje)
+            endParty(action.mensaje)
             break;
         case "badEnding":
-            // TODO
-            alert(action.mensaje)
+            endParty(action.mensaje)
             break;
         default: break;
     }
 }
 
+function endParty(message){
+    Swal.fire({
+        title: message,
+        text: '¿Salir de la partida?',
+        icon: 'info',
+        confirmButtonText: 'Salir',
+        }).then(() => {
+        location.reload();
+        });
+}
 function discusion(players, timestampVote) {
     startVoiceChat();
     showScreen("gameSection");
