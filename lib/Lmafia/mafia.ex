@@ -67,6 +67,9 @@ defmodule Lmafia.Mafia do
     victims = get_jugadores(:vivos,gameInfo)
     {:ok, json} = Jason.encode(%{type: "action", action: "selectVictim", victims: Enum.map(victims, fn p -> p.userName end), timestamp_select_victims: timestamp})
     multicast(gameInfo.mafiosos, json)
+
+    send_gameInfo(:selectVictim, gameInfo)
+
     Process.send_after(self(), :kill, Timing.get_time(:selectVictim))
     {:noreply, gameInfo}
   end
@@ -82,6 +85,8 @@ defmodule Lmafia.Mafia do
     players = get_jugadores(:vivos, gameInfo)
     {:ok, json} = Jason.encode(%{type: "action", action: "savePlayer", players: Enum.map(players, fn p -> p.userName end), timestamp_select_saved: timestamp})
     multicast(gameInfo.medicos, json)
+
+    send_gameInfo(:medics, gameInfo)
 
     Process.send_after(self(), :cure, Timing.get_time(:medics))
     {:noreply, gameInfo}
@@ -104,6 +109,8 @@ defmodule Lmafia.Mafia do
     players = get_jugadores(:vivos, gameInfo)
     {:ok, json} = Jason.encode(%{type: "action", action: "selectGuilty", players: Enum.map(players, fn p -> p.userName end), timestamp_select_guilty: timestamp})
     multicast(gameInfo.policias, json)
+
+    send_gameInfo(:policias, gameInfo)
 
     Process.send_after(self(), :preDiscussion, Timing.get_time(:policias))
     {:noreply, gameInfo}
@@ -262,6 +269,21 @@ defmodule Lmafia.Mafia do
     jugador = get_jugador(gameInfo,username)
     {:ok, json} = Jason.encode(%{type: "characterSet", character: "Muerto"})
     multicast(jugador, json)
+  end
+
+  defp send_gameInfo(:selectVictim, gameInfo) do
+    {:ok, json} = Jason.encode(%{type: "info", info: "selectVictim", text: "La mafiosos estan en buscando víctimas"})
+    multicast(gameInfo.medicos ++ gameInfo.aldeanos ++ gameInfo.policias ++ gameInfo.muertos, json)    
+  end
+
+  defp send_gameInfo(:medics, gameInfo) do
+    {:ok, json} = Jason.encode(%{type: "info", info: "savePlayer", text: "La médicos salieron a curar"})
+    multicast(gameInfo.mafiosos ++ gameInfo.aldeanos ++ gameInfo.policias ++ gameInfo.muertos, json)    
+  end
+
+  defp send_gameInfo(:policias, gameInfo) do
+    {:ok, json} = Jason.encode(%{type: "info", info: "selectGuilty", text: "Los policias estan confirmando sospechas"})
+    multicast(gameInfo.mafiosos ++ gameInfo.aldeanos ++ gameInfo.medicos ++ gameInfo.muertos, json)    
   end
 
   defp multicast(clientes, mensaje_json) do
