@@ -136,7 +136,10 @@ function discusion(players, timestampVote) {
         if (document.getElementById("finalVoteTimer") != null ) {
             document.getElementById("finalVoteTimer").innerText =
                 "La seleccion de mafioso PARA ECHARLO termina en " + time;
+        } else {
+            console.log("OJO que no encontre el timer")
         }
+
 
         if(time == 1){
             finishVoiceChat();
@@ -158,7 +161,10 @@ function discussionResult(mensaje, timestamp) {
         if (document.getElementById("discussionResultTimer") != null ) {
             document.getElementById("discussionResultTimer").innerText =
                 "Proxima etapa en " + time;
+        } else {
+            console.log("OJO que no encontre el timer")
         }
+
         if(time == 1){
             clearGameUI();
         }
@@ -177,7 +183,10 @@ function nightResult(result, timestamp) {
         if (document.getElementById("nightResultTimer") != null){
             document.getElementById("nightResultTimer").innerText =
                 "Votación final en " + time;
+        } else {
+            console.log("OJO que no encontre el timer")
         }
+
 
         if(time == 1){
             clearGameUI();
@@ -197,6 +206,8 @@ function guiltyAnswer(answer, timestamp) {
         if (document.getElementById("guiltyAnswerTimer")!= null){
             document.getElementById("guiltyAnswerTimer").innerText =
                 "La confirmación de sospechas termina en " + time;
+        } else {
+            console.log("OJO que no encontre el timer")
         }
 
         if(time == 1){
@@ -227,7 +238,10 @@ function selectGuilty(players, timestampGuilty){
         if (document.getElementById("guiltyTimer") != null ) {
             document.getElementById("guiltyTimer").innerText =
                 "La seleccion de sospecha termina en " + time;
+        } else {
+            console.log("OJO que no encontre el timer")
         }
+
 
         if(time == 1){
             socket.send(JSON.stringify({roomId: roomId, type: "guiltySelect", guilty: guilty}));
@@ -259,7 +273,10 @@ function savePlayer(players, timestampSave){
         if (document.getElementById("saveTimer") != null) {
             document.getElementById("saveTimer").innerText =
                 "La seleccion de salvado termina en " + time;
+        } else {
+            console.log("OJO que no encontre el timer")
         }
+
 
         if(time == 1){
             socket.send(JSON.stringify({roomId: roomId, type: "saveSelect", saved: saved}));
@@ -293,6 +310,8 @@ function selectVictim(victims, timestampSelectVictim){
         if (document.getElementById("victimTimer")!= null){
             document.getElementById("victimTimer").innerText =
                 "La selección de víctima termina en " + time;
+        } else {
+            console.log("OJO que no encontre el timer")
         }
 
         if(time == 1){
