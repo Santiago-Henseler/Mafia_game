@@ -325,7 +325,7 @@ function selectVictim(victims, timestampSelectVictim){
 let cuentaRegresiva = null
 
 function timer(time, fn){
-    let cuentaRegresiva = setInterval(() => {
+    cuentaRegresiva = setInterval(() => {
         fn(time)
         time--;
         if(time < 0){
