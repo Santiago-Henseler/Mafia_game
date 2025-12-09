@@ -264,6 +264,21 @@ defmodule Lmafia.Mafia do
     multicast(jugador, json)
   end
 
+  defp send_gameInfo(:selectVictim, gameInfo) do
+    {:ok, json} = Jason.encode(%{type: "info", info: "selectVictim", text: "La mafiosos estan buscando víctimas"})
+    multicast(gameInfo.medicos ++ gameInfo.aldeanos ++ gameInfo.policias ++ gameInfo.muertos, json)    
+  end
+
+  defp send_gameInfo(:medics, gameInfo) do
+    {:ok, json} = Jason.encode(%{type: "info", info: "savePlayer", text: "La médicos salieron a curar"})
+    multicast(gameInfo.mafiosos ++ gameInfo.aldeanos ++ gameInfo.policias ++ gameInfo.muertos, json)    
+  end
+
+  defp send_gameInfo(:policias, gameInfo) do
+    {:ok, json} = Jason.encode(%{type: "info", info: "selectGuilty", text: "Los policias estan confirmando sospechas"})
+    multicast(gameInfo.mafiosos ++ gameInfo.aldeanos ++ gameInfo.medicos ++ gameInfo.muertos, json)    
+  end
+
   defp multicast(clientes, mensaje_json) do
     Enum.each(clientes, fn x -> send(x.pid, {:msg, mensaje_json}) end)
   end
