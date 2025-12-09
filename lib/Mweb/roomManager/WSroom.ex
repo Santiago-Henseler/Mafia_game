@@ -28,7 +28,7 @@ defmodule  Mweb.WSroom do
         {:ok, state}
       {:ok, %{"type" => "guiltySelect", "roomId" => roomId, "guilty" => player}} -> # Se devuelve si es asesino o no
         isMafiaAnswer = GenServer.call(RoomStore.getRoom(:RoomStore, roomId), {:gameAction, {:isMafia, player}})
-        timestamp = Timing.get_timestamp_stage(:transicion)
+        timestamp = Timing.get_timestamp_stage(:policiasGuiltyAnswer)
         {:reply, {:text, Jason.encode!(%{type: "action", action: "guiltyAnswer", answer: isMafiaAnswer, timestamp_guilty_answer: timestamp})}, state}
       {:ok, %{"type" => "finalVoteSelect", "roomId" => roomId, "voted" => voted}} ->
         GenServer.call(RoomStore.getRoom(:RoomStore, roomId), {:gameAction, {:finalVoteSelect, voted}})
