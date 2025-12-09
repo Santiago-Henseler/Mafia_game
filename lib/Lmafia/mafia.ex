@@ -272,7 +272,7 @@ defmodule Lmafia.Mafia do
   end
 
   defp send_gameInfo(:selectVictim, gameInfo) do
-    {:ok, json} = Jason.encode(%{type: "info", info: "selectVictim", text: "La mafiosos estan buscando víctimas"})
+    {:ok, json} = Jason.encode(%{type: "info", info: "selectVictim", text: "La mafiosos estan en buscando víctimas"})
     multicast(gameInfo.medicos ++ gameInfo.aldeanos ++ gameInfo.policias ++ gameInfo.muertos, json)    
   end
 

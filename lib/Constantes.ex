@@ -6,9 +6,9 @@ defmodule Constantes do
     @medicos 1
 
     @tiempo_transicion_estado 3000  #  3 segundos
-    @tiempo_inicio_partida 5000    # 10 segundos
-    @tiempo_debate_grupo 10000      #  35 segundos
-    @tiempo_debate_final 15000     #  40 segundos
+    @tiempo_inicio_partida 10000    # 10 segundos
+    @tiempo_debate_grupo 35000      #  35 segundos
+    @tiempo_debate_final 40000     #  40 segundos
 
     @port 4000
     @publicport 8080
