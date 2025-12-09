@@ -59,6 +59,9 @@ function connectWebSocket(){
             case "debug":
                 console.log(`[DEBUG]: ${data}`);
                 break;
+            case "info":
+                showInfo(data);
+                break;
             default: console.log(`[ERROR] Unknown message type: ${data}`)
         }
     }
