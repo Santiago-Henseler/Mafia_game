@@ -1,11 +1,21 @@
 function getRooms(){
 
-      const roomSelection = document.getElementById("roomsTable")
-      document.getElementById('roomsSection').classList.remove('d-none');
+    if(roomId != null)
+        return
+
+    const roomSelection = document.getElementById("roomsTable")
+    document.getElementById('roomsSection').classList.remove('d-none');
+
+    let rooms = 0;
 
     fetch(`${WEB_URL}/rooms`, {method: "GET"})
     .then(response => response.json())
     .then(data => {
+        if(data.length == 0){
+            setTimeout(() => {
+                getRooms();
+              }, 3000);  
+        }
         data.forEach(id => {
             const row = document.createElement('tr');
         
@@ -19,31 +29,29 @@ function getRooms(){
             roomSelection.appendChild(row); 
         });
     });
-
 }
 
 function createRoom(){
+    document.getElementById('roomsSection').classList.add('d-none');
 
     fetch(`${WEB_URL}/newRoom/`, {method: "POST"})
     .then(response => response.text())
     .then(data => {
         roomId = data;  
-//        header.innerHTML += `<center><h1>Room Id: ${roomId}</h1></center>`
-//        document.getElementById("roomSelection").style.display = "none"
         showRoomUI(roomId);
         connectWebSocket();
     });
 }
 
 function joinRoom(id){
+    document.getElementById('roomsSection').classList.add('d-none');
+
     roomId = id
 
     fetch(`${WEB_URL}/${playerName}/${roomId}/joinRoom/`, {method: "POST"})
     .then(response => response.json())
     .then(data => {
         playerName = data.playerName
-//        header.innerHTML += `<center><h1>Room Id: ${data.roomId}</h1></center>`
-//        document.getElementById("roomSelection").style.display = "none"
         showRoomUI(roomId);
         connectWebSocket();
     });
