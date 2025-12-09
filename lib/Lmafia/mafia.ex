@@ -67,9 +67,6 @@ defmodule Lmafia.Mafia do
     victims = get_jugadores(:vivos,gameInfo)
     {:ok, json} = Jason.encode(%{type: "action", action: "selectVictim", victims: Enum.map(victims, fn p -> p.userName end), timestamp_select_victims: timestamp})
     multicast(gameInfo.mafiosos, json)
-
-    send_gameInfo(:selectVictim, gameInfo)
-
     Process.send_after(self(), :kill, Timing.get_time(:selectVictim))
     {:noreply, gameInfo}
   end
@@ -85,8 +82,6 @@ defmodule Lmafia.Mafia do
     players = get_jugadores(:vivos, gameInfo)
     {:ok, json} = Jason.encode(%{type: "action", action: "savePlayer", players: Enum.map(players, fn p -> p.userName end), timestamp_select_saved: timestamp})
     multicast(gameInfo.medicos, json)
-
-    send_gameInfo(:medics, gameInfo)
 
     Process.send_after(self(), :cure, Timing.get_time(:medics))
     {:noreply, gameInfo}
@@ -109,8 +104,6 @@ defmodule Lmafia.Mafia do
     players = get_jugadores(:vivos, gameInfo)
     {:ok, json} = Jason.encode(%{type: "action", action: "selectGuilty", players: Enum.map(players, fn p -> p.userName end), timestamp_select_guilty: timestamp})
     multicast(gameInfo.policias, json)
-
-    send_gameInfo(:policias, gameInfo)
 
     Process.send_after(self(), :preDiscussion, Timing.get_time(:policias))
     {:noreply, gameInfo}
