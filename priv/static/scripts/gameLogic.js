@@ -133,6 +133,8 @@ function discusion(players, timestampVote) {
     });
 
     timer(getTimeForNextStage(timestampVote), (time)=>{
+        if (!document.getElementById("finalVoteTimer")) return;
+
         document.getElementById("finalVoteTimer").innerText =
             "La seleccion de mafioso PARA ECHARLO termina en " + time;
 
@@ -153,6 +155,8 @@ function discussionResult(mensaje, timestamp) {
     `;
 
     timer(getTimeForNextStage(timestamp), (time)=>{
+        if (!document.getElementById("discussionResultTimer")) return;
+
         document.getElementById("discussionResultTimer").innerText =
             "Proxima etapa en " + time;
 
@@ -171,6 +175,8 @@ function nightResult(result, timestamp) {
     `;
 
     timer(getTimeForNextStage(timestamp), (time)=>{
+        if (!document.getElementById("nightResultTimer")) return;
+
         document.getElementById("nightResultTimer").innerText =
             "Votación final en " + time;
 
@@ -189,6 +195,8 @@ function guiltyAnswer(answer, timestamp) {
     `;
 
     timer(getTimeForNextStage(timestamp), (time)=>{
+        if (!document.getElementById("guiltyAnswerTimer")) return;
+
         document.getElementById("guiltyAnswerTimer").innerText =
             "La confirmación de sospechas termina en " + time;
 
@@ -217,6 +225,8 @@ function selectGuilty(players, timestampGuilty){
     });
 
     timer(getTimeForNextStage(timestampGuilty), (time)=>{
+        if (!document.getElementById("guiltyTimer")) return;
+
         document.getElementById("guiltyTimer").innerText =
             "La seleccion de sospecha termina en " + time;
 
@@ -247,6 +257,8 @@ function savePlayer(players, timestampSave){
     });
 
     timer(getTimeForNextStage(timestampSave), (time)=>{
+        if (!document.getElementById("saveTimer")) return;
+
         document.getElementById("saveTimer").innerText =
             "La seleccion de salvado termina en " + time;
 
@@ -279,6 +291,8 @@ function selectVictim(victims, timestampSelectVictim){
     });
 
     timer(getTimeForNextStage(timestampSelectVictim), (time)=>{
+        if (!document.getElementById("victimTimer")) return;
+
         document.getElementById("victimTimer").innerText =
             "La selección de víctima termina en " + time;
 
