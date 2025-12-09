@@ -85,6 +85,11 @@ function showRoomUI(roomId) {
 }
 
 function clearGameUI() {
+    if (cuentaRegresiva) {
+        clearInterval(cuentaRegresiva);
+        cuentaRegresiva = null;
+    }
+
     document.getElementById("gameTitle").textContent = "";
     document.getElementById("gameContent").innerHTML = "";
     document.getElementById("gameActions").innerHTML = "";

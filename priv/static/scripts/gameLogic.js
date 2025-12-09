@@ -141,7 +141,7 @@ function discusion(players, timestampVote) {
         }
 
 
-        if(time == 1){
+        if(time == 0){
             finishVoiceChat();
             socket.send(JSON.stringify({roomId: roomId, type: "finalVoteSelect", voted: voted}));
             clearGameUI();
@@ -165,7 +165,7 @@ function discussionResult(mensaje, timestamp) {
             console.log("OJO que no encontre el timer")
         }
 
-        if(time == 1){
+        if(time == 0){
             clearGameUI();
         }
     });
@@ -188,7 +188,7 @@ function nightResult(result, timestamp) {
         }
 
 
-        if(time == 1){
+        if(time == 0){
             clearGameUI();
         }
     });
@@ -210,7 +210,7 @@ function guiltyAnswer(answer, timestamp) {
             console.log("OJO que no encontre el timer")
         }
 
-        if(time == 1){
+        if(time == 0){
             clearGameUI();
         }
     });
@@ -243,7 +243,7 @@ function selectGuilty(players, timestampGuilty){
         }
 
 
-        if(time == 1){
+        if(time == 0){
             socket.send(JSON.stringify({roomId: roomId, type: "guiltySelect", guilty: guilty}));
             clearGameUI();
         }
@@ -278,7 +278,7 @@ function savePlayer(players, timestampSave){
         }
 
 
-        if(time == 1){
+        if(time == 0){
             socket.send(JSON.stringify({roomId: roomId, type: "saveSelect", saved: saved}));
             clearGameUI();
         }
@@ -314,7 +314,7 @@ function selectVictim(victims, timestampSelectVictim){
             console.log("OJO que no encontre el timer")
         }
 
-        if(time == 1){
+        if(time == 0){
             finishVoiceChat();
             socket.send(JSON.stringify({ type: "victimSelect",roomId: roomId,victim: victim }));
             clearGameUI();
@@ -322,14 +322,22 @@ function selectVictim(victims, timestampSelectVictim){
     });
 }
 
+let cuentaRegresiva = null
+
 function timer(time, fn){
     let cuentaRegresiva = setInterval(() => {
         fn(time)
         time--;
-        if(time == 0){
+        if(time < 0){
             clearInterval(cuentaRegresiva);
+            cuentaRegresiva = null;
         }
     }, 1000);
+
+    return () => {
+        clearInterval(cuentaRegresiva);
+        cuentaRegresiva = null;
+    };
 }
 
 function getTimeForNextStage(timestampNextStage) {
