@@ -23,7 +23,7 @@ defmodule Constantes do
     defmacro tTRANSICION, do: @tiempo_transicion_estado
     defmacro tDEBATE_GRUPO, do: @tiempo_debate_grupo
     defmacro tDEBATE_FINAL, do: @tiempo_debate_final
-    defmacro tRESPUESTA, do: 4 * @tiempo_transicion_estado
+    defmacro tRESPUESTA, do: 2 * @tiempo_transicion_estado
 
     defmacro ePORT, do: @port
     defmacro pPORT, do: @publicport
@@ -37,7 +37,7 @@ defmodule Timing do
     def get_time(:selectVictim), do: Constantes.tDEBATE_GRUPO
     def get_time(:medics), do: Constantes.tDEBATE_GRUPO
     def get_time(:policias), do: Constantes.tDEBATE_GRUPO + Constantes.tRESPUESTA
-    def get_time(:preDiscussion), do: Constantes.tDEBATE_GRUPO
+    def get_time(:preDiscussion), do: Constantes.tRESPUESTA
     def get_time(:discussion), do: Constantes.tDEBATE_FINAL
 
     def get_timestamp_stage(:start) do
@@ -57,7 +57,7 @@ defmodule Timing do
     end
 
     def get_timestamp_stage(:preDiscussion) do
-        timestamp_plus_miliseconds(Constantes.tDEBATE_GRUPO)
+        timestamp_plus_miliseconds(Constantes.tRESPUESTA)
     end
 
     def get_timestamp_stage(:discussion) do
