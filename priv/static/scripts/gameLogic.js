@@ -133,8 +133,10 @@ function discusion(players, timestampVote) {
     });
 
     timer(getTimeForNextStage(timestampVote), (time)=>{
-        document.getElementById("finalVoteTimer").innerText =
-            "La seleccion de mafioso PARA ECHARLO termina en " + time;
+        if (document.getElementById("finalVoteTimer") != null ) {
+            document.getElementById("finalVoteTimer").innerText =
+                "La seleccion de mafioso PARA ECHARLO termina en " + time;
+        }
 
         if(time == 1){
             finishVoiceChat();
@@ -153,9 +155,10 @@ function discussionResult(mensaje, timestamp) {
     `;
 
     timer(getTimeForNextStage(timestamp), (time)=>{
-        document.getElementById("discussionResultTimer").innerText =
-            "Proxima etapa en " + time;
-
+        if (document.getElementById("discussionResultTimer") != null ) {
+            document.getElementById("discussionResultTimer").innerText =
+                "Proxima etapa en " + time;
+        }
         if(time == 1){
             clearGameUI();
         }
@@ -171,8 +174,10 @@ function nightResult(result, timestamp) {
     `;
 
     timer(getTimeForNextStage(timestamp), (time)=>{
-        document.getElementById("nightResultTimer").innerText =
-            "Votación final en " + time;
+        if (document.getElementById("nightResultTimer") != null){
+            document.getElementById("nightResultTimer").innerText =
+                "Votación final en " + time;
+        }
 
         if(time == 1){
             clearGameUI();
@@ -189,8 +194,10 @@ function guiltyAnswer(answer, timestamp) {
     `;
 
     timer(getTimeForNextStage(timestamp), (time)=>{
-        document.getElementById("guiltyAnswerTimer").innerText =
-            "La confirmación de sospechas termina en " + time;
+        if (document.getElementById("guiltyAnswerTimer")!= null){
+            document.getElementById("guiltyAnswerTimer").innerText =
+                "La confirmación de sospechas termina en " + time;
+        }
 
         if(time == 1){
             clearGameUI();
@@ -217,8 +224,10 @@ function selectGuilty(players, timestampGuilty){
     });
 
     timer(getTimeForNextStage(timestampGuilty), (time)=>{
-        document.getElementById("guiltyTimer").innerText =
-            "La seleccion de sospecha termina en " + time;
+        if (document.getElementById("guiltyTimer") != null ) {
+            document.getElementById("guiltyTimer").innerText =
+                "La seleccion de sospecha termina en " + time;
+        }
 
         if(time == 1){
             socket.send(JSON.stringify({roomId: roomId, type: "guiltySelect", guilty: guilty}));
@@ -247,8 +256,10 @@ function savePlayer(players, timestampSave){
     });
 
     timer(getTimeForNextStage(timestampSave), (time)=>{
-        document.getElementById("saveTimer").innerText =
-            "La seleccion de salvado termina en " + time;
+        if (document.getElementById("saveTimer") != null) {
+            document.getElementById("saveTimer").innerText =
+                "La seleccion de salvado termina en " + time;
+        }
 
         if(time == 1){
             socket.send(JSON.stringify({roomId: roomId, type: "saveSelect", saved: saved}));
@@ -279,8 +290,10 @@ function selectVictim(victims, timestampSelectVictim){
     });
 
     timer(getTimeForNextStage(timestampSelectVictim), (time)=>{
-        document.getElementById("victimTimer").innerText =
-            "La selección de víctima termina en " + time;
+        if (document.getElementById("victimTimer")!= null){
+            document.getElementById("victimTimer").innerText =
+                "La selección de víctima termina en " + time;
+        }
 
         if(time == 1){
             finishVoiceChat();

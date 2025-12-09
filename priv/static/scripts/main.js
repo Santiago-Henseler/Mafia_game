@@ -15,7 +15,7 @@ function initSession(){
     if (playerName == null || playerName == "") {
         alert('Por favor, ingrese un nombre.');
         return;
-        }
+    }
 
     document.getElementById("session").classList.add('d-none');
     getRooms();
