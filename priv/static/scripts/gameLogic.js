@@ -93,6 +93,14 @@ function doAction(action){
     }
 }
 
+function showInfo(action){
+    let info = action.info ;
+    if ( info == "selectVictim" || info == "savePlayer" || info == "selectGuilty" ) {
+        showScreen("gameSection");
+        document.getElementById("text-center").textContent = action.text;
+    }
+}
+
 function endParty(message){
     Swal.fire({
         title: message,
