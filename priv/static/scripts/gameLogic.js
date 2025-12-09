@@ -94,11 +94,11 @@ function doAction(action){
 }
 
 function showInfo(action){
-    let text = action.text ;
+    let info = action.info ;
 
-    if ( text == "selectVictim" || text == "savePlayer" || text == "selectGuilty" ) {
+    if ( info == "selectVictim" || info == "savePlayer" || info == "selectGuilty" ) {
         showScreen("gameSection");
-        document.getElementById("text-center").textContent = text;
+        document.getElementById("text-center").textContent = action.text;
     }
 }
 
